@@ -1,7 +1,7 @@
 version: "3"
 services:
   usage_exporter:
-    image: tluettje/openstack-tenant-usage-exporter
+    image: tluettje/openstack-tenant-usage-exporter:v2
     env_file:
       - admin-openrc
     networks:
@@ -15,6 +15,14 @@ services:
       - internal
     ports:
       - "9090:9090"
+  # global prometheus instance scraping data from the local instance
+  global_prometheus:
+    build: ./global_prometheus
+    networks:
+      - internal
+    ports:
+      - "9090:80"
+
 
 
 networks:
