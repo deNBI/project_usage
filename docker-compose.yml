@@ -1,0 +1,21 @@
+version: "3"
+services:
+  usage_exporter:
+    image: tluettje/openstack-tenant-usage-exporter
+    env_file:
+      - admin-openrc
+    networks:
+      - internal
+    expose:
+      - "8080"
+  # local prometheus instance responsible for monitoring
+  local_prometheus:
+    build: ./local_prometheus
+    networks:
+      - internal
+    ports:
+      - "9090:9090"
+
+
+networks:
+  internal:
