@@ -46,6 +46,8 @@ services:
       - INFLUXDB_USER_PASSWORD=secret
     expose:
       - "8086"
+    ports:
+      - "8086:8086"
 
 volumes:
   local_prometheus:
