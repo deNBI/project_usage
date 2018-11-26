@@ -32,15 +32,23 @@ scrape_configs:
         #    static_configs:
         #      - targets: ['192.168.0.5:9183']
 
-  - job_name: 'denbi_clouds'
+  - job_name: 'denbi_cloud_tenant_usage'
     honor_labels: true
     metrics_path: '/federate'
 
     params:
       'match[]':
-        - '{job="project_usages"}'
+        # do not collect any metrics besides the one we are interested in
+        - '{job="project_usages",__name__=~"tenant_.*"}'
 
     static_configs:
       - targets: ['local_prometheus:9090']
         labels:
           location: bi_devstack
+
+remote_write:
+  - url:
+    "http://influx_db:8086/api/v1/prom/write?db=global_prometheus&u=prometheus&p=secret"
+
+remote_read:
+  - url: "http://influx_db:8086/api/v1/prom/read?db=global_prometheus&u=prometheus&p=secret"

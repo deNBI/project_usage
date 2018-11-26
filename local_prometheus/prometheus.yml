@@ -34,5 +34,11 @@ scrape_configs:
 
   - job_name: project_usages
     metrics_path: /
+
+    # do not collect any metrics of the python client
+    params:
+      'match[]':
+        - '{__name__=~"tenant_.*"}'
+
     static_configs:
       - targets: ['usage_exporter:8080']
