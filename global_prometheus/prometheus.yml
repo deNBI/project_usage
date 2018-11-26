@@ -47,8 +47,7 @@ scrape_configs:
           location: bi_devstack
 
 remote_write:
-  - url:
-    "http://influx_db:8086/api/v1/prom/write?db=global_prometheus&u=prometheus&p=secret"
+  - url: "http://influx_db:8086/api/v1/prom/write?db=global_prometheus&u=prometheus&p=secret"
 
 remote_read:
   - url: "http://influx_db:8086/api/v1/prom/read?db=global_prometheus&u=prometheus&p=secret"
