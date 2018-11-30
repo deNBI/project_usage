@@ -1,18 +1,13 @@
+---
 global:
-  scrape_interval:     15s # By default, scrape targets every 15 seconds.
-  evaluation_interval: 15s # By default, scrape targets every 15 seconds.
+  scrape_interval: 15s  # By default, scrape targets every 15 seconds.
+  evaluation_interval: 15s  # By default, scrape targets every 15 seconds.
   # scrape_timeout is set to the global default (10s).
 
-
-# Load and evaluate rules in this file every 'evaluation_interval' seconds.
-rule_files:
-  # - "first.rules"
-  # - "second.rules"
 
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.
 scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
   - job_name: 'prometheus'
 
     # metrics_path defaults to '/metrics'
@@ -20,17 +15,6 @@ scrape_configs:
 
     static_configs:
       - targets: ['localhost:9090']
-
-        # not that useful inside docker container
-        #  - job_name: node
-        #    # If prometheus-node-exporter is installed, grab stats about the local
-        #    # machine by default.
-        #    static_configs:
-        #      - targets: ['localhost:9100']
-
-        #  - job_name: openstack
-        #    static_configs:
-        #      - targets: ['192.168.0.5:9183']
 
   - job_name: 'denbi_cloud_tenant_usage'
     honor_labels: true
@@ -42,12 +26,20 @@ scrape_configs:
         - '{job="project_usages",__name__=~"tenant_.*"}'
 
     static_configs:
-      - targets: ['local_prometheus:9090']
+      - targets: ['site-a_prom_proxy']
         labels:
-          location: bi_devstack
+          location: site-a
+      - targets: ['site-b_prom_proxy']
+        labels:
+          location: site-b
+      - targets: ['site-c_prom_proxy']
+        labels:
+          location: site-c
 
 remote_write:
+  # yamllint disable-line rule:line-length
   - url: "http://influx_db:8086/api/v1/prom/write?db=global_prometheus&u=prometheus&p=secret"
 
 remote_read:
+  # yamllint disable-line rule:line-length
   - url: "http://influx_db:8086/api/v1/prom/read?db=global_prometheus&u=prometheus&p=secret"
