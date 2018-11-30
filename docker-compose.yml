@@ -4,9 +4,9 @@ services:
   # {{{ site-a
   site-a_exporter:
     environment:
-      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/dummy_machines.toml
+      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/low_usage.toml
       - USAGE_EXPORTER_UPDATE_INTERVAL=5
-    image: tluettje/openstack-tenant-usage-exporter:v3
+    image: tluettje/openstack-tenant-usage-exporter:v5
     # needed in production
     # env_file:
     #   - admin-openrc
@@ -30,6 +30,70 @@ services:
       - site-a
     ports:
       - "8080:9090"
+    expose:
+      - "9090"
+  # }}}
+  # {{{ site-b
+  site-b_exporter:
+    environment:
+      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/dummy_machines.toml
+      - USAGE_EXPORTER_UPDATE_INTERVAL=5
+    image: tluettje/openstack-tenant-usage-exporter:v5
+    # needed in production
+    # env_file:
+    #   - admin-openrc
+    networks:
+      - site-b
+    expose:
+      - "8080"
+  site-b_prom_proxy:
+    build: ./haproxy
+    networks:
+      - site-b
+      - public
+    expose:
+      - "80"
+    volumes:
+      - "./haproxy/etc:/usr/local/etc/haproxy:ro"
+  # local prometheus instance responsible for monitoring
+  site-b_prometheus:
+    build: ./local_prometheus
+    networks:
+      - site-b
+    ports:
+      - "8081:9090"
+    expose:
+      - "9090"
+  # }}}
+  # {{{ site-c
+  site-c_exporter:
+    environment:
+      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/high_usage.toml
+      - USAGE_EXPORTER_UPDATE_INTERVAL=5
+    image: tluettje/openstack-tenant-usage-exporter:v5
+    # needed in production
+    # env_file:
+    #   - admin-openrc
+    networks:
+      - site-c
+    expose:
+      - "8080"
+  site-c_prom_proxy:
+    build: ./haproxy
+    networks:
+      - site-c
+      - public
+    expose:
+      - "80"
+    volumes:
+      - "./haproxy/etc:/usr/local/etc/haproxy:ro"
+  # local prometheus instance responsible for monitoring
+  site-c_prometheus:
+    build: ./local_prometheus
+    networks:
+      - site-c
+    ports:
+      - "8082:9090"
     expose:
       - "9090"
   # }}}
