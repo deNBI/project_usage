@@ -36,6 +36,8 @@ scrape_configs:
         labels:
           location: site-c
 
+    bearer_token: "uame3aeD1eingionei8ceu5ti"
+
 remote_write:
   # yamllint disable-line rule:line-length
   - url: "http://influx_db:8086/api/v1/prom/write?db=global_prometheus&u=prometheus&p=secret"
