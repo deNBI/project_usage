@@ -6,7 +6,7 @@ services:
     environment:
       - USAGE_EXPORTER_DUMMY_FILE=/code/resources/low_usage.toml
       - USAGE_EXPORTER_UPDATE_INTERVAL=5
-    image: tluettje/openstack-tenant-usage-exporter:v5
+    image: tluettje/openstack-tenant-usage-exporter:v6
     # needed in production
     # env_file:
     #   - admin-openrc
@@ -38,7 +38,7 @@ services:
     environment:
       - USAGE_EXPORTER_DUMMY_FILE=/code/resources/dummy_machines.toml
       - USAGE_EXPORTER_UPDATE_INTERVAL=5
-    image: tluettje/openstack-tenant-usage-exporter:v5
+    image: tluettje/openstack-tenant-usage-exporter:v6
     # needed in production
     # env_file:
     #   - admin-openrc
@@ -70,7 +70,7 @@ services:
   #    environment:
   #      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/high_usage.toml
   #      - USAGE_EXPORTER_UPDATE_INTERVAL=5
-  #    image: tluettje/openstack-tenant-usage-exporter:v5
+  #    image: tluettje/openstack-tenant-usage-exporter:v6
   #    # needed in production
   #    # env_file:
   #    #   - admin-openrc
@@ -127,8 +127,14 @@ services:
       - "8086:8086"
   grafana:
     image: grafana/grafana:5.4.0
+    depends_on:
+      - global_prometheus
     networks:
       - portal
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=secret
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning
     ports:
       - "3000:3000"
 
