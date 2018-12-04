@@ -66,36 +66,36 @@ services:
       - "9090"
   # }}}
   # {{{ site-c
-  site-c_exporter:
-    environment:
-      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/high_usage.toml
-      - USAGE_EXPORTER_UPDATE_INTERVAL=5
-    image: tluettje/openstack-tenant-usage-exporter:v5
-    # needed in production
-    # env_file:
-    #   - admin-openrc
-    networks:
-      - site-c
-    expose:
-      - "8080"
-  site-c_prom_proxy:
-    build: ./haproxy
-    networks:
-      - site-c
-      - public
-    expose:
-      - "80"
-    volumes:
-      - "./haproxy/etc:/usr/local/etc/haproxy:ro"
-  # local prometheus instance responsible for monitoring
-  site-c_prometheus:
-    build: ./local_prometheus
-    networks:
-      - site-c
-    ports:
-      - "8082:9090"
-    expose:
-      - "9090"
+  #  site-c_exporter:
+  #    environment:
+  #      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/high_usage.toml
+  #      - USAGE_EXPORTER_UPDATE_INTERVAL=5
+  #    image: tluettje/openstack-tenant-usage-exporter:v5
+  #    # needed in production
+  #    # env_file:
+  #    #   - admin-openrc
+  #    networks:
+  #      - site-c
+  #    expose:
+  #      - "8080"
+  #  site-c_prom_proxy:
+  #    build: ./haproxy
+  #    networks:
+  #      - site-c
+  #      - public
+  #    expose:
+  #      - "80"
+  #    volumes:
+  #      - "./haproxy/etc:/usr/local/etc/haproxy:ro"
+  #  # local prometheus instance responsible for monitoring
+  #  site-c_prometheus:
+  #    build: ./local_prometheus
+  #    networks:
+  #      - site-c
+  #    ports:
+  #      - "8082:9090"
+  #    expose:
+  #      - "9090"
   # }}}
   # global prometheus instance scraping data from the local instance
   global_prometheus:
