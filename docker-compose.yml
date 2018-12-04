@@ -132,6 +132,7 @@ services:
     networks:
       - portal
     environment:
+      - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=secret
     volumes:
       - ./grafana/provisioning/:/etc/grafana/provisioning
@@ -143,7 +144,7 @@ services:
 #   global_prometheus:
 
 networks:
-  # internal network at single location, i.e. bielefeld
+  # internal network at single location, e.g. bielefeld
   site-a:
   site-b:
   site-c:
