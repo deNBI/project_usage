@@ -105,6 +105,8 @@ services:
       - public
     ports:
       - "80:9090"
+    expose:
+      - "9090"
   influx_db:
     image: influxdb:1.7-alpine
     networks:
@@ -123,6 +125,12 @@ services:
       - "8086"
     ports:
       - "8086:8086"
+  grafana:
+    image: grafana/grafana:5.4.0
+    networks:
+      - portal
+    ports:
+      - "3000:3000"
 
 # volumes:
 #   local_prometheus:
