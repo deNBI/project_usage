@@ -14,13 +14,13 @@ defaults
 
 frontend http-in
 	bind *:80
-	default_backend local_prometheus
+	default_backend prometheus
 	capture request header Authorization len 50
 	capture request header User-Agent len 64
 
 	# Authorization header, called 'bearer token' inside prometheus config
 	# must be the same as in the global_prometheus config
-	acl auth_header req.fhdr(Authorization) "Bearer uame3aeD1eingionei8ceu5ti"
+	acl auth_header req.fhdr(Authorization) "Bearer $PROMETHEUS_AUTH_TOKEN"
 	http-request deny if ! auth_header
 
 	# %5B%5D is [] escaped
@@ -28,9 +28,5 @@ frontend http-in
 	# http-request deny if testp
 
 
-backend local_prometheus
-	balance hdr(host)
-	# only one will/should be available per network
-	server site-a site-a_prometheus:9090
-	server site-b site-b_prometheus:9090
-	server site-c site-c_prometheus:9090
+backend prometheus
+	server prometheus prometheus:9090

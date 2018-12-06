@@ -1,0 +1,36 @@
+# contains configuation for a production setup a at site with access to an
+# openstack instance
+---
+version: "3"
+services:
+  exporter:
+    image: tluettje/os_project_usage_exporter:v1
+    env_file:
+      - admin-openrc
+    networks:
+      - usage_exporter
+    expose:
+      - "8080"
+  # prometheus instance responsible for monitoring
+  prometheus:
+    build: ./local_prometheus
+    networks:
+      - usage_exporter
+    ports:
+      - "8080:9090"
+    expose:
+      - "9090"
+  prometheus_proxy:
+    build: ./haproxy
+    networks:
+      - usage_exporter
+    expose:
+      # this port must be reachable by the global prometheus instance inside the
+      # portal
+      # also setup some encryption to or in front of it, otherwise the whole
+      # authentication stuff is useless
+      - "80"
+    volumes:
+      - "./haproxy/etc:/usr/local/etc/haproxy:ro"
+networks:
+  usage_exporter

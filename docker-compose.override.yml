@@ -1,0 +1,63 @@
+---
+version: "3"
+services:
+  # sites producing dummy data for development environment without access to a
+  # real openstack instance
+  # {{{ site-a
+  site-a_exporter:
+    environment:
+      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/low_usage.toml
+      - USAGE_EXPORTER_UPDATE_INTERVAL=5
+    image: tluettje/os_project_usage_exporter:v1
+    networks:
+      - site-a
+    expose:
+      - "8080"
+  site-a_prom_proxy:
+    build: ./dev/haproxy
+    networks:
+      - site-a
+      - public
+    expose:
+      - "80"
+    volumes:
+      - "./dev/haproxy/etc:/usr/local/etc/haproxy:ro"
+  # local prometheus instance responsible for monitoring
+  site-a_prometheus:
+    build: ./dev/local_prometheus
+    networks:
+      - site-a
+    ports:
+      - "8080:9090"
+    expose:
+      - "9090"
+  # }}}
+  # {{{ site-b
+  site-b_exporter:
+    environment:
+      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/dummy_machines.toml
+      - USAGE_EXPORTER_UPDATE_INTERVAL=5
+    image: tluettje/os_project_usage_exporter:v1
+    networks:
+      - site-b
+    expose:
+      - "8080"
+  site-b_prom_proxy:
+    build: ./dev/haproxy
+    networks:
+      - site-b
+      - public
+    expose:
+      - "80"
+    volumes:
+      - "./dev/haproxy/etc:/usr/local/etc/haproxy:ro"
+  # local prometheus instance responsible for monitoring
+  site-b_prometheus:
+    build: ./dev/local_prometheus
+    networks:
+      - site-b
+    ports:
+      - "8081:9090"
+    expose:
+      - "9090"
+  # }}}

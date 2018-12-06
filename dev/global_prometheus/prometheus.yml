@@ -36,7 +36,7 @@ scrape_configs:
         labels:
           location: site-c
 
-    bearer_token: "uame3aeD1eingionei8ceu5ti"
+    bearer_token: "DontUseThisInProduction"
 
 remote_write:
   # yamllint disable-line rule:line-length

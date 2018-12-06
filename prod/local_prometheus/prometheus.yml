@@ -1,0 +1,35 @@
+---
+global:
+  scrape_interval: 15s  # By default, scrape targets every 15 seconds.
+  evaluation_interval: 15s  # By default, scrape targets every 15 seconds.
+  # scrape_timeout is set to the global default (10s).
+
+
+# Load and evaluate rules in this file every 'evaluation_interval' seconds.
+rule_files:
+# - "first.rules"
+# - "second.rules"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  - job_name: 'self_monitoring'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: project_usages
+    metrics_path: /
+
+    # do not collect any metrics of the python client
+    params:
+      'match[]':
+        - '{__name__=~"project_.*_usage"}'
+
+    static_configs:
+      # only one of them should be available therefore no problem to define them
+      # all
+      - targets: ['exporter:8080']

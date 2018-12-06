@@ -1,0 +1,39 @@
+---
+global:
+  scrape_interval: 15s  # By default, scrape targets every 15 seconds.
+  evaluation_interval: 15s  # By default, scrape targets every 15 seconds.
+  # scrape_timeout is set to the global default (10s).
+
+
+scrape_configs:
+  - job_name: 'self_monitoring'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'denbi_cloud_project_usage'
+    honor_labels: true
+    metrics_path: '/federate'
+
+    params:
+      'match[]':
+        # do not collect any metrics besides the one we are interested in
+        - '{job="project_usages",__name__=~"project_.*_usage"}'
+
+    static_configs:
+      - targets: ['$SITE_PROMETHEUS_PROXY_URL']
+        labels:
+          location: $SITE_NAME
+
+    bearer_token: "$PROMETHEUS_AUTH_TOKEN"
+
+remote_write:
+  # yamllint disable-line rule:line-length
+  - url: "http://influx_db:8086/api/v1/prom/write?db=global_prometheus&u=prometheus&p=secret"
+
+remote_read:
+  # yamllint disable-line rule:line-length
+  - url: "http://influx_db:8086/api/v1/prom/read?db=global_prometheus&u=prometheus&p=secret"
