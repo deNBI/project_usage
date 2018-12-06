@@ -16,14 +16,14 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
-  - job_name: 'denbi_cloud_tenant_usage'
+  - job_name: 'denbi_cloud_project_usage'
     honor_labels: true
     metrics_path: '/federate'
 
     params:
       'match[]':
         # do not collect any metrics besides the one we are interested in
-        - '{job="project_usages",__name__=~"tenant_.*"}'
+        - '{job="project_usages",__name__=~"project_.*_usage"}'
 
     static_configs:
       - targets: ['site-a_prom_proxy']

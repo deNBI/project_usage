@@ -54,7 +54,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "tenant_vcpu_usage",
+          "expr": "project_vcpu_usage",
           "format": "time_series",
           "intervalFactor": 1,
           "refId": "A"
@@ -137,7 +137,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "tenant_mb_usage",
+          "expr": "project_mb_usage",
           "format": "time_series",
           "intervalFactor": 1,
           "refId": "A"

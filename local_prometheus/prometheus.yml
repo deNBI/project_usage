@@ -27,7 +27,7 @@ scrape_configs:
     # do not collect any metrics of the python client
     params:
       'match[]':
-        - '{__name__=~"tenant_.*"}'
+        - '{__name__=~"project_.*_usage"}'
 
     static_configs:
       # only one of them should be available therefore no problem to define them

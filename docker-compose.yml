@@ -6,7 +6,7 @@ services:
     environment:
       - USAGE_EXPORTER_DUMMY_FILE=/code/resources/low_usage.toml
       - USAGE_EXPORTER_UPDATE_INTERVAL=5
-    image: tluettje/openstack-tenant-usage-exporter:v6
+    image: tluettje/os_project_usage_exporter:v1
     # needed in production
     # env_file:
     #   - admin-openrc
@@ -38,7 +38,7 @@ services:
     environment:
       - USAGE_EXPORTER_DUMMY_FILE=/code/resources/dummy_machines.toml
       - USAGE_EXPORTER_UPDATE_INTERVAL=5
-    image: tluettje/openstack-tenant-usage-exporter:v6
+    image: tluettje/os_project_usage_exporter:v1
     # needed in production
     # env_file:
     #   - admin-openrc
@@ -70,7 +70,7 @@ services:
   #    environment:
   #      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/high_usage.toml
   #      - USAGE_EXPORTER_UPDATE_INTERVAL=5
-  #    image: tluettje/openstack-tenant-usage-exporter:v6
+  #    image: tluettje/os_project_usage_exporter:v1
   #    # needed in production
   #    # env_file:
   #    #   - admin-openrc
