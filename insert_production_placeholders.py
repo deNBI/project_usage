@@ -2,6 +2,7 @@
 """
 This script substitutes any placeholders for production setup, i.e. authentication
 tokens or URLs of services which differ from site to site.
+
 All required values are expected to be found as environment variables or commandline
 arguments, where the latter are having precedence, and the files requiring them can be
 recognized by their *.in extension. This is required since not all services (especially
@@ -52,7 +53,7 @@ def main() -> int:
         return 1
     for key, value in substitution_values.items():
         if not value:
-            print('Variable {} is empty. Aborting'.format(key))
+            print("Variable {} is empty. Aborting".format(key))
             return 1
 
     for in_file in production_config_folder.glob("**/*.in"):
@@ -74,6 +75,7 @@ def main() -> int:
             print("Wrote constructed config to", out_file)
         except PermissionError as e:
             print("Could not save produced config, due to error:", e)
+            return 2
     return 0
 
 

@@ -24,7 +24,9 @@ services:
       - "./dev/haproxy/etc:/usr/local/etc/haproxy:ro"
   # local prometheus instance responsible for monitoring
   site-a_prometheus:
-    build: ./dev/local_prometheus
+    image: prom/prometheus
+    volumes:
+      - "./dev/local_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
     networks:
       - site-a
     ports:
@@ -53,7 +55,9 @@ services:
       - "./dev/haproxy/etc:/usr/local/etc/haproxy:ro"
   # local prometheus instance responsible for monitoring
   site-b_prometheus:
-    build: ./dev/local_prometheus
+    image: prom/prometheus
+    volumes:
+      - "./dev/local_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
     networks:
       - site-b
     ports:
@@ -61,3 +65,19 @@ services:
     expose:
       - "9090"
   # }}}
+  global_prometheus:
+    image: prom/prometheus
+    volumes:
+      - "./dev/global_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+    networks:
+      - public
+  influx_db:
+    env_file:
+      - ./dev/influx_db.env
+  grafana:
+    env_file:
+      - ./dev/grafana.env
+networks:
+  site-a:
+  site-b:
+  public:

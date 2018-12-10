@@ -1,12 +1,11 @@
 ---
 version: "3"
 services:
-  # global prometheus instance scraping data from the local instance
+  # global prometheus instance scraping data from the local instances
   global_prometheus:
-    build: ./global_prometheus
+    image: prom/prometheus
     networks:
       - portal
-      - public
     ports:
       - "80:9090"
     expose:
@@ -21,10 +20,6 @@ services:
       # automatically initialize the following db
       - INFLUXDB_DB=global_prometheus
       - INFLUXDB_HTTP_AUTH_ENABLED=true
-      - INFLUXDB_ADMIN_USER=admin
-      - INFLUXDB_ADMIN_PASSWORD=secret
-      - INFLUXDB_USER=prometheus
-      - INFLUXDB_USER_PASSWORD=secret
     expose:
       - "8086"
     ports:
@@ -48,13 +43,4 @@ services:
 #   global_prometheus:
 
 networks:
-  # internal network at single location, e.g. bielefeld
-  site-a:
-  site-b:
-  site-c:
-  # the real 'internet', only connection betweent the two other networks
-  public:
-  # internal network inside the denbi portal
   portal:
-
-# vim: foldmethod=marker
