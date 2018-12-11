@@ -20,3 +20,8 @@ admin-openrc
 README.html
 # default filename for production credentials
 .env
+prod/influx_db.env
+prod/haproxy/etc/haproxy.cfg
+prod/grafana.env
+prod/global_prometheus/prometheus.yml
+usage-openrc
