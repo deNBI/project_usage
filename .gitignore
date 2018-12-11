@@ -18,3 +18,5 @@ tags
 
 admin-openrc
 README.html
+# default filename for production credentials
+.env

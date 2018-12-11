@@ -15,17 +15,48 @@ from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from os import getenv
 from string import Template
 from pathlib import Path
+from urllib.parse import quote
+from typing import Dict
+from textwrap import indent, dedent
 
 __author__ = "tluettje"
 __license__ = "AGPLv3"
 
 substitution_variables = {
-    "PROMETHEUS_AUTH_TOKEN": """The token used by the global/portal prometheus instance
+    "PROMETHEUS_AUTH_TOKEN": {
+        "description": """\
+    The token used by the global/portal prometheus instance
     to authenticate itself against the HAProxy of the local/site prometheus
-    instance.""",
-    "SITE_PROMETHEUS_PROXY_URL": """URL[:PORT] of the site proxy, which the
-    global/portal prometheus will scrape.""",
-    "SITE_NAME": """The name/location of site, should be unique among all sites.""",
+    instance."""
+    },
+    "SITE_NAME": {
+        "description": """The name/location of site, should be unique among all sites."""
+    },
+    "SITE_PROMETHEUS_PROXY_URL": {
+        "description": """\
+    URL[:PORT] of the site proxy, which the global/portal prometheus will scrape.""",
+        "formatter": quote,
+    },
+    "INFLUXDB_ADMIN_USER": {
+        "description": """\
+        The name of the admin user of the influx database inside the portal""",
+        "default": "admin",
+    },
+    "INFLUXDB_ADMIN_PASSWORD": {
+        "description": """\
+        The password of the admin user of the influx database inside the portal"""
+    },
+    "INFLUXDB_USER": {
+        "description": """\
+        The name of the user owning the database containing the prometheus data of the
+        influx database inside the portal""",
+        "default": "prometheus",
+    },
+    "INFLUXDB_PASSWORD": {
+        "description": """\
+        The password of the user owning the database containing the prometheus data of
+        the influx database inside the portal"""
+    },
 }
 
 production_config_folder = Path(__file__).parent / "prod"
@@ -37,13 +68,48 @@ def main() -> int:
         formatter_class=ArgumentDefaultsHelpFormatter,
         epilog="{} @ {}".format(__license__, __author__),
     )
-    for var, description in substitution_variables.items():
-        parser.add_argument(
-            "--" + var, type=str, help=description, default=getenv(var, "")
+    template_args_parser = parser.add_argument_group("Template options")
+    template_args_parser.add_argument(
+        "-g",
+        "--generate-template",
+        action="store_true",
+        help="""Print a sourcable file to STDOUT containing all variables to set with
+        few defaults. Save it i.e. to `.env` (which is part of the gitignore)""",
+    )
+    build_args_parser = parser.add_argument_group("Build options")
+    for var_name, var_information in substitution_variables.items():
+        build_args_parser.add_argument(
+            "--" + var_name,
+            type=str,
+            help=var_information["description"],
+            default=getenv(var_name, ""),
         )
-
+    build_args_parser.add_argument(
+        "-d",
+        "--dry-run",
+        action="store_true",
+        help="Print built files instead of writing them.",
+    )
     args = parser.parse_args()
-    substitution_values = vars(args)
+    if args.generate_template:
+        for var_name, var_information in substitution_variables.items():
+            print(
+                "{}\n{}={}".format(
+                    # effectively replace any common whitespace at the beginning of
+                    # every description line with '# '
+                    indent(dedent(var_information["description"]), prefix="# "),
+                    var_name,
+                    var_information.get("default", ""),
+                )
+            )
+        return 0
+    else:
+        return produce_config_files(vars(args), args.dry_run)
+
+
+def produce_config_files(
+    substitution_values: Dict[str, str], dry_run: bool = False
+) -> int:
     if not production_config_folder.exists() and production_config_folder.is_dir():
         print(
             "Cannot find production folder at expected location `{}`. Aborting".format(
@@ -55,6 +121,8 @@ def main() -> int:
         if not value:
             print("Variable {} is empty. Aborting".format(key))
             return 1
+        if "formatter" in substitution_variables[key]:  # type: ignore
+            substitution_values[key] = substitution_variables[key]["formatter"](value)
 
     for in_file in production_config_folder.glob("**/*.in"):
         print("Reading:", in_file)
@@ -69,13 +137,16 @@ def main() -> int:
             print("Could not process Template due to the following error:", e)
             return 2
         out_file = in_file.with_suffix("")
-        try:
-            with out_file.open("w") as file:
-                file.write(config_out)
-            print("Wrote constructed config to", out_file)
-        except PermissionError as e:
-            print("Could not save produced config, due to error:", e)
-            return 2
+        if not dry_run:
+            try:
+                with out_file.open("w") as file:
+                    file.write(config_out)
+                print("Wrote constructed config to", out_file)
+            except PermissionError as e:
+                print("Could not save produced config, due to error:", e)
+                return 2
+        else:
+            print("Output file: ", out_file, "\n", config_out)
     return 0
 
 
