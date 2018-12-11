@@ -15,7 +15,6 @@ from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from os import getenv
 from string import Template
 from pathlib import Path
-from urllib.parse import quote
 from typing import Dict
 from textwrap import indent, dedent
 
@@ -34,8 +33,7 @@ substitution_variables = {
     },
     "SITE_PROMETHEUS_PROXY_URL": {
         "description": """\
-    URL[:PORT] of the site proxy, which the global/portal prometheus will scrape.""",
-        "formatter": quote,
+    URL[:PORT] of the site proxy, which the global/portal prometheus will scrape."""
     },
     "INFLUXDB_ADMIN_USER": {
         "description": """\
@@ -52,10 +50,17 @@ substitution_variables = {
         influx database inside the portal""",
         "default": "prometheus",
     },
-    "INFLUXDB_PASSWORD": {
+    "INFLUXDB_USER_PASSWORD": {
         "description": """\
         The password of the user owning the database containing the prometheus data of
         the influx database inside the portal"""
+    },
+    "GF_SECURITY_ADMIN_USER": {
+        "description": "The name of the grafana admin user inside the portal.",
+        "default": "admin",
+    },
+    "GF_SECURITY_ADMIN_PASSWORD": {
+        "description": "The password of the grafana admin user inside the portal."
     },
 }
 
@@ -94,7 +99,7 @@ def main() -> int:
     if args.generate_template:
         for var_name, var_information in substitution_variables.items():
             print(
-                "{}\n{}={}".format(
+                "{}\nexport {}={}".format(
                     # effectively replace any common whitespace at the beginning of
                     # every description line with '# '
                     indent(dedent(var_information["description"]), prefix="# "),
@@ -117,12 +122,10 @@ def produce_config_files(
             )
         )
         return 1
-    for key, value in substitution_values.items():
-        if not value:
-            print("Variable {} is empty. Aborting".format(key))
+    for variable in substitution_variables:
+        if not substitution_values[variable]:
+            print("Variable {} is empty. Aborting".format(variable))
             return 1
-        if "formatter" in substitution_variables[key]:  # type: ignore
-            substitution_values[key] = substitution_variables[key]["formatter"](value)
 
     for in_file in production_config_folder.glob("**/*.in"):
         print("Reading:", in_file)
@@ -131,7 +134,11 @@ def produce_config_files(
         try:
             config_out = config_template.substitute(substitution_values)
         except KeyError as e:
-            print("Missing value for variable {}. Aborting".format(e.args))
+            print(
+                "Missing value for variable {} in file `{}`. Aborting".format(
+                    e.args, in_file
+                )
+            )
             return 1
         except ValueError as e:
             print("Could not process Template due to the following error:", e)
