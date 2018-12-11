@@ -24,7 +24,6 @@ services:
       - "./prod/local_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
   prometheus_proxy:
     image: mminks/haproxy-docker-logging
-    build: ./haproxy
     networks:
       - usage_exporter
     expose:
@@ -34,6 +33,6 @@ services:
       # authentication stuff is useless
       - "80"
     volumes:
-      - "./haproxy/etc:/usr/local/etc/haproxy:ro"
+      - "./prod/haproxy/etc/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
 networks:
   usage_exporter

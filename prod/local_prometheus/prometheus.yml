@@ -5,11 +5,6 @@ global:
   # scrape_timeout is set to the global default (10s).
 
 
-# Load and evaluate rules in this file every 'evaluation_interval' seconds.
-rule_files:
-# - "first.rules"
-# - "second.rules"
-
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.
 scrape_configs:
@@ -30,6 +25,4 @@ scrape_configs:
         - '{__name__=~"project_.*_usage"}'
 
     static_configs:
-      # only one of them should be available therefore no problem to define them
-      # all
       - targets: ['exporter:8080']
