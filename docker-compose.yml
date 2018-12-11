@@ -22,19 +22,15 @@ services:
       - INFLUXDB_HTTP_AUTH_ENABLED=true
     expose:
       - "8086"
-    ports:
-      - "8086:8086"
   grafana:
     image: grafana/grafana:5.4.0
     depends_on:
       - global_prometheus
     networks:
       - portal
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=secret
     volumes:
-      - ./grafana/provisioning/:/etc/grafana/provisioning
+      # currenntly no difference between dev and prod environment
+      - ./prod/grafana/provisioning/:/etc/grafana/provisioning
     ports:
       - "3000:3000"
 

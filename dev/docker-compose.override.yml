@@ -5,10 +5,11 @@ services:
   # real openstack instance
   # {{{ site-a
   site-a_exporter:
+    env_file:
+      - dev/local_exporter.env
     environment:
       - USAGE_EXPORTER_DUMMY_FILE=/code/resources/low_usage.toml
-      - USAGE_EXPORTER_UPDATE_INTERVAL=5
-    image: tluettje/os_project_usage_exporter:v1
+    image: tluettje/os_project_usage_exporter:v2
     networks:
       - site-a
     expose:
@@ -36,10 +37,11 @@ services:
   # }}}
   # {{{ site-b
   site-b_exporter:
+    env_file:
+      - dev/local_exporter.env
     environment:
       - USAGE_EXPORTER_DUMMY_FILE=/code/resources/dummy_machines.toml
-      - USAGE_EXPORTER_UPDATE_INTERVAL=5
-    image: tluettje/os_project_usage_exporter:v1
+    image: tluettje/os_project_usage_exporter:v2
     networks:
       - site-b
     expose:
@@ -66,11 +68,12 @@ services:
       - "9090"
   # }}}
   global_prometheus:
-    image: prom/prometheus
     volumes:
       - "./dev/global_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
     networks:
       - public
+      - site-a
+      - site-b
   influx_db:
     env_file:
       - ./dev/influx_db.env
