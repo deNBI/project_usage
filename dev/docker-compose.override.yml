@@ -15,7 +15,7 @@ services:
     expose:
       - "8080"
   site-a_prom_proxy:
-    build: ./dev/haproxy
+    image: mminks/haproxy-docker-logging
     networks:
       - site-a
       - public
@@ -47,7 +47,7 @@ services:
     expose:
       - "8080"
   site-b_prom_proxy:
-    build: ./dev/haproxy
+    image: mminks/haproxy-docker-logging
     networks:
       - site-b
       - public
