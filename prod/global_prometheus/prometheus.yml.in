@@ -32,8 +32,8 @@ scrape_configs:
 
 remote_write:
   # yamllint disable-line rule:line-length
-  - url: "http://influx_db:8086/api/v1/prom/write?db=global_prometheus&u=prometheus&p=secret"
+  - url: "http://influx_db:8086/api/v1/prom/write?db=global_prometheus&u=${INFLUXDB_USER}&p=${INFLUXDB_USER_PASSWORD}"
 
 remote_read:
   # yamllint disable-line rule:line-length
-  - url: "http://influx_db:8086/api/v1/prom/read?db=global_prometheus&u=prometheus&p=secret"
+  - url: "http://influx_db:8086/api/v1/prom/read?db=global_prometheus&u=${INFLUXDB_USER}&p=${INFLUXDB_USER_PASSWORD}"

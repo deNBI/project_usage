@@ -35,4 +35,4 @@ services:
     volumes:
       - "./prod/haproxy/etc/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
 networks:
-  usage_exporter
+  usage_exporter:
