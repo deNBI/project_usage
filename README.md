@@ -37,7 +37,7 @@ configured token.
 ## Development Compose
 
 ```
-docker-compose -f docker-compose.yml -f dev/docker-compose.override.yml up -d --build
+docker-compose -f docker-compose.portal.yml -f dev/docker-compose.override.yml up -d --build
 ```
 
 This setup includes:

@@ -4,9 +4,9 @@
 version: "3"
 services:
   exporter:
-    image: tluettje/os_project_usage_exporter:v1
+    image: tluettje/os_project_usage_exporter:v2
     env_file:
-      - admin-openrc
+      - usage-openrc
     networks:
       - usage_exporter
     expose:
