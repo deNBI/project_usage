@@ -16,14 +16,15 @@ services:
     image: prom/prometheus
     networks:
       - usage_exporter
-    ports:
-      - "8080:9090"
     expose:
       - "9090"
     volumes:
       - "./prod/local_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
   prometheus_proxy:
-    image: mminks/haproxy-docker-logging
+    # use the one below to have haproxy debug log directly to stdout including
+    # every request with auth headers
+    # image: mminks/haproxy-docker-logging
+    image: haproxy:1.8-alpine
     networks:
       - usage_exporter
     expose:
