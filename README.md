@@ -65,19 +65,19 @@ docker-compose --file docker-compose.site.yml up --detach --build
 Afterwards `docker ps` should include the following lines (names will be different, depending on the name of `$PWD`):
 ```
 CONTAINER ID        IMAGE                                   COMMAND                  CREATED             STATUS              PORTS                    NAMES
-84438ff5ebda        haproxy:1.8-alpine                      "/docker-entrypoint.…"   15 minutes ago      Up 15 minutes       80/tcp                   exporter_compose_prometheus_proxy_1
-e0da4eb94024        prom/prometheus                         "/bin/prometheus --c…"   15 minutes ago      Up 15 minutes       9090/tcp                 exporter_compose_prometheus_1
-beaffc7f68e6        tluettje/os_project_usage_exporter:v2   "python project_usag…"   16 hours ago        Up 10 minutes       8080/tcp                 exporter_compose_exporter_1
+84438ff5ebda        haproxy:1.8-alpine                      "/docker-entrypoint.…"   15 minutes ago      Up 15 minutes       80/tcp                   project_usage_prometheus_proxy_1
+e0da4eb94024        prom/prometheus                         "/bin/prometheus --c…"   15 minutes ago      Up 15 minutes       9090/tcp                 project_usage_prometheus_1
+beaffc7f68e6        tluettje/os_project_usage_exporter:v2   "python project_usag…"   16 hours ago        Up 10 minutes       8080/tcp                 project_usage_exporter_1
 
 ```
 
 You can test a successful connection to your openstack instance by taking a look at the
-logs of the container (`docker logs exporter_compose_exporter_1`) or by inspecting the
+logs of the container (`docker logs project_usage_exporter_1`) or by inspecting the
 exported usage values. The name of the container might be different
 
 ```bash
-curl $(docker inspect exporter_compose_exporter_1 | jq --raw-output \
-  '.[].NetworkSettings.Networks.exporter_compose_usage_exporter.IPAddress'):8080
+curl $(docker inspect project_usage_exporter_1 | jq --raw-output \
+  '.[].NetworkSettings.Networks.project_usage_usage_exporter.IPAddress'):8080
 ```
 
 ## Development Compose
