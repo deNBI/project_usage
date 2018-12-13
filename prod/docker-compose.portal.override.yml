@@ -7,6 +7,10 @@ services:
   influx_db:
     env_file:
       - ./prod/influx_db.env
+    volumes:
+      - portal_influxdb:/var/lib/influxdb
   grafana:
     env_file:
       - ./prod/grafana.env
+volumes:
+  portal_influxdb:

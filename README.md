@@ -36,6 +36,38 @@ configured token.
 
 ## Production Compose
 
+### Credentials
+
+There are multiple points in the production where authentication is needed, i.e. login
+credentials for grafana and most importantly between the Portal-Prometheus and the local
+HAProxy instance. Unfortunately Prometheus does not support expansion of environment
+values inside its configuration (see prometheus/prometheus#2357). Therefore a small
+helper script `insert_production_placeholder.py` has been developed to assist you in
+this area.
+
+**! If you only want to setup a site continue at the next section !**
+
+Configuration files with placeholders for credentials can be recognized by their `*.in`
+extension and since the python `string.Template` was used the placeholder syntax is
+similar to bash variable syntax. All placeholders are stored collected inside the helper
+script along with a description, run `./insert_production_placeholders.py -h` to get an
+overview. Running `./insert_production_placeholders.py` will try to read your chosen
+values from the environment or you pass them as command line arguments. The following
+steps describe the recommended workflow:
+
+1. Generate a template to store all your credentials:
+
+```bash
+./insert_production_placeholders.py -g > .env
+```
+
+2. Insert your chosen values, i.e. use `pwgen` to generate secure passwords.
+3. Let the script build the config files by executing
+```bash
+# The enclosing brackets create a subshell and therefore prevent the environment
+# variables from being added to your environment.
+(source .env && ./insert_production_placeholders.py)
+```
 
 ### Site
 
@@ -84,10 +116,31 @@ curl $(docker inspect project_usage_exporter_1 | jq --raw-output \
   '.[].NetworkSettings.Networks.project_usage_usage_exporter.IPAddress'):8080
 ```
 
+### Portal
+
+```bash
+docker-compose -f docker-compose.portal.yml \
+               -f prod/docker-compose.portal.override.yml up -d --build
+```
+
+This will start the following containers:
+
+```
+CONTAINER ID  IMAGE                  COMMAND                 CREATED        STATUS        PORTS     NAMES
+c249ffe81080  influxdb:1.7-alpine    "/entrypoint.sh infl…"  7 seconds ago  Up 4 seconds  8086/tcp  project_usage_influx_db_1
+7a2f3f870744  grafana/grafana:5.4.0  "/run.sh"               22 hours ago   Up 3 seconds  3000/tcp  project_usage_grafana_1
+004f5f72fa70  prom/prometheus        "/bin/prometheus --c…"  22 hours ago   Up 5 seconds  9090/tcp  project_usage_global_prometheus_1
+```
+
+A named volume `portal_influxdb` is created to save the data of the *InfluxDB* instance,
+most likely its name will be `project_usage_portal_influxdb`, again depending on the
+value of `$PWD`.
+
 ## Development Compose
 
 ```
-docker-compose -f docker-compose.portal.yml -f dev/docker-compose.override.yml up -d --build
+docker-compose -f docker-compose.portal.yml \
+               -f dev/docker-compose.override.yml up -d --build
 ```
 
 This setup includes all services shown in the diagram and additionally:
