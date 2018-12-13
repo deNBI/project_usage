@@ -58,6 +58,11 @@ OS_IDENTITY_API_VERSION=3
 
 You can start all `Local-*` services with the following command:
 
+If you only want to setup the site-part of the production setup, your last preparation
+step is to copy `prod/haproxy/etc/haproxy.cfg.in` to `prod/haproxy/etc/haproxy.cfg.in`
+and replace `$PROMETHEUS_AUTH_TOKEN` with a token of your choice, e.g. the output of
+`pwgen -y -n 30 1`.
+
 ```
 docker-compose --file docker-compose.site.yml up --detach --build
 ```
