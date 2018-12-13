@@ -70,6 +70,8 @@ services:
   global_prometheus:
     volumes:
       - "./dev/global_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+    ports:
+      - "80:9090"
     networks:
       - public
       - site-a
@@ -80,6 +82,8 @@ services:
   grafana:
     env_file:
       - ./dev/grafana.env
+    ports:
+      - "3000:3000"
 networks:
   site-a:
   site-b:

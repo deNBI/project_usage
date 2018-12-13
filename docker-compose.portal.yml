@@ -6,8 +6,6 @@ services:
     image: prom/prometheus
     networks:
       - portal
-    ports:
-      - "80:9090"
     expose:
       - "9090"
   influx_db:
@@ -31,8 +29,6 @@ services:
     volumes:
       # currenntly no difference between dev and prod environment
       - ./prod/grafana/provisioning/:/etc/grafana/provisioning
-    ports:
-      - "3000:3000"
 
 # volumes:
 #   local_prometheus:
