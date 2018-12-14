@@ -20,6 +20,13 @@ services:
       - INFLUXDB_HTTP_AUTH_ENABLED=true
     expose:
       - "8086"
+    healthcheck:
+      test: wget http://localhost:8086/ping -q /dev/null || return 1
+      interval: 2m
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: always
   grafana:
     image: grafana/grafana:5.4.0
     depends_on:
