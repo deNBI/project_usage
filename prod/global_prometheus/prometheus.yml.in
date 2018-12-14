@@ -24,9 +24,6 @@ scrape_configs:
         - '{job="project_usages",__name__=~"project_.*_usage"}'
 
     static_configs:
-      - targets: ['$SITE_PROMETHEUS_PROXY_URL']
-        labels:
-          location: $SITE_NAME
 
     bearer_token: "$PROMETHEUS_AUTH_TOKEN"
 

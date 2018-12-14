@@ -28,13 +28,6 @@ substitution_variables = {
     to authenticate itself against the HAProxy of the local/site prometheus
     instance."""
     },
-    "SITE_NAME": {
-        "description": """The name/location of site, should be unique among all sites."""
-    },
-    "SITE_PROMETHEUS_PROXY_URL": {
-        "description": """\
-    URL[:PORT] of the site proxy, which the global/portal prometheus will scrape."""
-    },
     "INFLUXDB_ADMIN_USER": {
         "description": """\
         The name of the admin user of the influx database inside the portal""",
