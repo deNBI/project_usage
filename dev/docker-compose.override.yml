@@ -1,5 +1,5 @@
 ---
-version: "3"
+version: "3.4"
 services:
   # sites producing dummy data for development environment without access to a
   # real openstack instance

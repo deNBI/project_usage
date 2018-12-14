@@ -1,5 +1,5 @@
 ---
-version: "3"
+version: "3.4"
 services:
   # global prometheus instance scraping data from the local instances
   global_prometheus:

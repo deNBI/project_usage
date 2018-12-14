@@ -1,7 +1,7 @@
 # contains configuation for a production setup a at site with access to an
 # openstack instance
 ---
-version: "3"
+version: "3.4"
 services:
   exporter:
     image: tluettje/os_project_usage_exporter:v2
