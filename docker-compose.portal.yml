@@ -21,7 +21,7 @@ services:
     expose:
       - "8086"
     healthcheck:
-      test: wget http://localhost:8086/ping -q /dev/null || return 1
+      test: wget http://localhost:8086/ping -qO /dev/null || return 1
       interval: 2m
       timeout: 10s
       retries: 3
