@@ -24,7 +24,7 @@ services:
     expose:
       - "9090"
     volumes:
-      - "./prod/local_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./prod/local_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
   prometheus_proxy:
     # use the one below to have haproxy debug log directly to stdout including
     # every request with auth headers

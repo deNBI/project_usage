@@ -3,7 +3,7 @@ version: "3"
 services:
   global_prometheus:
     volumes:
-      - "./prod/global_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./prod/global_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
   influx_db:
     env_file:
       - ./prod/influx_db.env
