@@ -40,5 +40,17 @@ services:
       - "80"
     volumes:
       - "./prod/haproxy/etc/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
+  grafana:
+    image: grafana/grafana:5.4.0
+    depends_on:
+      - prometheus
+    networks:
+      - usage_exporter
+    volumes:
+      - ./prod/grafana/provisioning/:/prod/grafana/provisioning
+    env_file:
+      - ./prod/site_grafana.env
+    expose:
+      - "3000"
 networks:
   usage_exporter:
