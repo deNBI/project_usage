@@ -3,15 +3,22 @@ version: "3.4"
 services:
   # sites producing dummy data for development environment without access to a
   # real openstack instance
+  # aliases have to be used to prevent name collisions, in production only one
+  # `local_prometheus` will be present at one location
   # {{{ site-a
   site-a_exporter:
     env_file:
       - dev/local_exporter.env
     environment:
-      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/low_usage.toml
+      # it makes sense to use a different profile per emulated site
+      # or at least a different value for OS_EXPORTER_PROJECT_DOMAINS
+      # see https://github.com/gilbus/OS_project_usage_exporter/
+      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/dummy_machines.toml
     image: tluettje/os_project_usage_exporter:v2
     networks:
-      - site-a
+      site-a:
+        aliases:
+          - usage_exporter
     expose:
       - "8080"
   site-a_prom_proxy:
@@ -29,21 +36,42 @@ services:
     volumes:
       - "./dev/local_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
     networks:
-      - site-a
+      site-a:
+        aliases:
+          - local_prometheus
     ports:
-      - "8080:9090"
+      # 8081 -> site_a, 8082 -> site_b ...
+      - "8081:9090"
     expose:
       - "9090"
+  site-a_grafana:
+    image: grafana/grafana:5.4.0
+    depends_on:
+      - site-a_prometheus
+    networks:
+      - site-a
+    volumes:
+      - ./dev/grafana/provisioning/:/etc/grafana/provisioning
+    env_file:
+      - ./dev/grafana.env
+    ports:
+      # 3001 -> site_a, 3002 -> site_b ...
+      - "3001:3000"
   # }}}
   # {{{ site-b
   site-b_exporter:
     env_file:
       - dev/local_exporter.env
     environment:
-      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/dummy_machines.toml
+      # it makes sense to use a different profile per emulated site
+      # or at least a different value for OS_EXPORTER_PROJECT_DOMAINS
+      # see https://github.com/gilbus/OS_project_usage_exporter/
+      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/low_usage.toml
     image: tluettje/os_project_usage_exporter:v2
     networks:
-      - site-b
+      site-b:
+        aliases:
+          - usage_exporter
     expose:
       - "8080"
   site-b_prom_proxy:
@@ -61,11 +89,27 @@ services:
     volumes:
       - "./dev/local_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
     networks:
-      - site-b
+      site-b:
+        aliases:
+          - local_prometheus
     ports:
-      - "8081:9090"
+      # 8081 -> site_a, 8082 -> site_b ...
+      - "8082:9090"
     expose:
       - "9090"
+  site-b_grafana:
+    image: grafana/grafana:5.4.0
+    depends_on:
+      - site-b_prometheus
+    networks:
+      - site-b
+    volumes:
+      - ./dev/grafana/provisioning/:/etc/grafana/provisioning
+    env_file:
+      - ./dev/grafana.env
+    ports:
+      # 3001 -> site_a, 3002 -> site_b ...
+      - "3002:3000"
   # }}}
   global_prometheus:
     volumes:
@@ -74,8 +118,6 @@ services:
       - "80:9090"
     networks:
       - public
-      - site-a
-      - site-b
   influx_db:
     env_file:
       - ./dev/influx_db.env

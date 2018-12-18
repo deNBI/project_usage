@@ -30,8 +30,4 @@ scrape_configs:
         - '{__name__=~"project_.*_usage"}'
 
     static_configs:
-      # only one of them should be available therefore no problem to define them
-      # all
-      - targets: ['site-a_exporter:8080']
-      - targets: ['site-b_exporter:8080']
-      - targets: ['site-c_exporter:8080']
+      - targets: ['usage_exporter:8080']
