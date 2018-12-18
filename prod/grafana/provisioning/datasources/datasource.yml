@@ -4,14 +4,14 @@ apiVersion: 1
 
 # list of datasources that should be deleted from the database
 deleteDatasources:
-  - name: Portal-Prometheus
+  - name: Prometheus
     orgId: 1
 
 # list of datasources to insert/update depending
 # whats available in the database
 datasources:
   # <string, required> name of the datasource. Required
-  - name: Portal-Prometheus
+  - name: Prometheus
     # <string, required> datasource type. Required
     type: prometheus
     # <string, required> access mode. direct or proxy. Required
@@ -19,7 +19,7 @@ datasources:
     # <int> org id. will default to orgId 1 if not specified
     orgId: 1
     # <string> url
-    url: http://global_prometheus:9090
+    url: http://prometheus:9090
     # <string> database password, if used
     # <bool> enable/disable basic auth
     basicAuth: false

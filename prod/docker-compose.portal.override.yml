@@ -1,7 +1,7 @@
 ---
 version: "3.4"
 services:
-  global_prometheus:
+  prometheus:
     volumes:
       - "./prod/global_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
   influx_db:

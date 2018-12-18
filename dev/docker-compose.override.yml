@@ -38,7 +38,7 @@ services:
     networks:
       site-a:
         aliases:
-          - local_prometheus
+          - prometheus
     ports:
       # 8081 -> site_a, 8082 -> site_b ...
       - "8081:9090"
@@ -91,7 +91,7 @@ services:
     networks:
       site-b:
         aliases:
-          - local_prometheus
+          - prometheus
     ports:
       # 8081 -> site_a, 8082 -> site_b ...
       - "8082:9090"
@@ -111,7 +111,7 @@ services:
       # 3001 -> site_a, 3002 -> site_b ...
       - "3002:3000"
   # }}}
-  global_prometheus:
+  prometheus:
     volumes:
       - "./dev/global_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
     ports:
