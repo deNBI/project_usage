@@ -49,7 +49,7 @@ services:
     volumes:
       - ./prod/grafana/provisioning/:/prod/grafana/provisioning
     env_file:
-      - ./prod/site_grafana.env
+      - ./prod/grafana.env
     expose:
       - "3000"
 networks:

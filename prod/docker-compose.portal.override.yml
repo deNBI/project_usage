@@ -11,6 +11,6 @@ services:
       - portal_influxdb:/var/lib/influxdb
   grafana:
     env_file:
-      - ./prod/portal_grafana.env
+      - ./prod/grafana.env
 volumes:
   portal_influxdb:
