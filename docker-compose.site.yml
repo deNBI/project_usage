@@ -19,6 +19,8 @@ services:
   # prometheus instance responsible for monitoring
   prometheus:
     image: prom/prometheus
+    # use self build Dockerfile as alternative
+    # build: prod/local_prometheus
     networks:
       - usage_exporter
     expose:
@@ -30,6 +32,8 @@ services:
     # every request with auth headers
     # image: mminks/haproxy-docker-logging
     image: haproxy:1.8-alpine
+    # use self build Dockerfile as alternative
+    # build: prod/haproxy
     networks:
       - usage_exporter
     expose:
@@ -41,13 +45,15 @@ services:
     volumes:
       - "./prod/haproxy/etc/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
   grafana:
-    image: grafana/grafana:5.4.0
+    image: grafana/grafana:5.4.2
+    # use self build Dockerfile as alternative
+    # build: prod/grafana
     depends_on:
       - prometheus
     networks:
       - usage_exporter
     volumes:
-      - ./prod/grafana/provisioning/:/prod/grafana/provisioning
+      - ./prod/grafana/provisioning/:/etc/grafana/provisioning
     env_file:
       - ./prod/grafana.env
     expose:
