@@ -14,7 +14,7 @@ services:
       # or at least a different value for OS_EXPORTER_PROJECT_DOMAINS
       # see https://github.com/gilbus/OS_project_usage_exporter/
       - USAGE_EXPORTER_DUMMY_FILE=/code/resources/dummy_machines.toml
-    image: tluettje/os_project_usage_exporter:v2
+    image: tluettje/os_project_usage_exporter:v3
     networks:
       site-a:
         aliases:
@@ -67,7 +67,7 @@ services:
       # or at least a different value for OS_EXPORTER_PROJECT_DOMAINS
       # see https://github.com/gilbus/OS_project_usage_exporter/
       - USAGE_EXPORTER_DUMMY_FILE=/code/resources/low_usage.toml
-    image: tluettje/os_project_usage_exporter:v2
+    image: tluettje/os_project_usage_exporter:v3
     networks:
       site-b:
         aliases:
