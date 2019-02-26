@@ -13,8 +13,8 @@ services:
       # it makes sense to use a different profile per emulated site
       # or at least a different value for OS_EXPORTER_PROJECT_DOMAINS
       # see https://github.com/gilbus/OS_project_usage_exporter/
-      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/dummy_machines.toml
-    image: tluettje/os_project_usage_exporter:v3
+      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/high_usage.toml
+    image: tluettje/os_project_usage_exporter:v4
     networks:
       site-a:
         aliases:
@@ -66,8 +66,8 @@ services:
       # it makes sense to use a different profile per emulated site
       # or at least a different value for OS_EXPORTER_PROJECT_DOMAINS
       # see https://github.com/gilbus/OS_project_usage_exporter/
-      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/low_usage.toml
-    image: tluettje/os_project_usage_exporter:v3
+      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/credits_machines.toml
+    image: tluettje/os_project_usage_exporter:v4
     networks:
       site-b:
         aliases:

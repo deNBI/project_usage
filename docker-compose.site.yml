@@ -4,7 +4,7 @@
 version: "3.4"
 services:
   exporter:
-    image: tluettje/os_project_usage_exporter:v3
+    image: tluettje/os_project_usage_exporter:v4
     env_file:
       - usage-openrc
     networks:
