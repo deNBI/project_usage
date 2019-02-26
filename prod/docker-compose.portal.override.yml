@@ -2,21 +2,11 @@
 version: "3.4"
 services:
   prometheus:
+    # in case of a reverse proxy insert the full path to prometheus here
+    # command:
+      # - --web.external-url=https://portal-dev.denbi.de/prom
     volumes:
       - "./prod/global_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
-    # use the following options below to operate prometheus behind a reverse
-    # proxy
-    # command:
-      # copy of default arguments, see
-      # https://hub.docker.com/r/prom/prometheus/dockerfile
-      # - "--config.file=/etc/prometheus/prometheus.yml"
-      # - "--storage.local.path=/prometheus"
-      # - "--web.console.libraries=/etc/prometheus/console_libraries"
-      # - "--web.console.templates=/etc/prometheus/consoles"
-      # your complete external url
-      # - "--web.external-url=https://mydomain.something.com/prometheus"
-      # following the above example
-      # - "--web.route-prefix=/prometheus"
   influx_db:
     env_file:
       - ./prod/influx_db.env
