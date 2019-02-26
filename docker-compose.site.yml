@@ -18,7 +18,7 @@ services:
       - "8080"
   # prometheus instance responsible for monitoring
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:v2.7.1
     # use self build Dockerfile as alternative
     # build: prod/local_prometheus
     networks:
