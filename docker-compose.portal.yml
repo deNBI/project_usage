@@ -8,8 +8,11 @@ services:
       - portal
     expose:
       - "9090"
+
   influx_db:
     image: influxdb:1.7-alpine
+    # a fixed name is necessary for the credits service to connect
+    container_name: portal_prometheus_influxdb
     networks:
       - portal
     environment:
@@ -18,6 +21,8 @@ services:
       # automatically initialize the following db
       - INFLUXDB_DB=portal_prometheus
       - INFLUXDB_HTTP_AUTH_ENABLED=true
+    volumes:
+      - "./prod/credits_influx_subscription.sh:/docker-entrypoint-initdb.d/01-sub.sh:ro"
     expose:
       - "8086"
     healthcheck:
@@ -27,6 +32,7 @@ services:
       retries: 3
       start_period: 60s
     restart: always
+
   grafana:
     image: grafana/grafana:5.4.0
     depends_on:
@@ -34,8 +40,24 @@ services:
     networks:
       - portal
     volumes:
-      # currenntly no difference between dev and prod environment
+      # currently no difference between dev and prod environment
       - ./prod/grafana/provisioning/:/etc/grafana/provisioning
+
+  credits:
+    image: tluettje/os_credits:0.1.0
+    # a fixed name is necessary for the subscription inside influx_db
+    container_name: portal_credits
+    networks:
+      - portal
+    healthcheck:
+      test: wget http://localhost/ping -qO /dev/null || return 1
+      interval: 2m
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    depends_on:
+      - influx_db
+    restart: always
 
 networks:
   portal:

@@ -15,5 +15,8 @@ services:
   grafana:
     env_file:
       - ./prod/grafana.env
+  credits:
+    volumes:
+      - "./prod/credits.toml:/etc/credits.toml:ro"
 volumes:
   portal_influxdb:

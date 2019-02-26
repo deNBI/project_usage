@@ -25,3 +25,4 @@ prod/haproxy/etc/haproxy.cfg
 prod/grafana.env
 prod/global_prometheus/prometheus.yml
 usage-openrc
+prod/credits.toml

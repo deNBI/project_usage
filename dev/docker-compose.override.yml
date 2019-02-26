@@ -126,6 +126,9 @@ services:
       - ./dev/grafana.env
     ports:
       - "3000:3000"
+  credits:
+    volumes:
+      - "./prod/credits.toml:/etc/credits.toml:ro"
 networks:
   site-a:
   site-b:
