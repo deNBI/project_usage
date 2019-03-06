@@ -1,0 +1,15 @@
+---
+version: "3.5"
+services:
+  exporter:
+    env_file:
+      - usage-openrc
+  site_prometheus:
+    volumes:
+      - "./prod/site_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+  site_prometheus_proxy:
+    volumes:
+      - "./prod/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
+  site_grafana:
+    volumes:
+      - "./prod/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"

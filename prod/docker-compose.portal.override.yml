@@ -1,22 +1,15 @@
 ---
 version: "3.4"
 services:
-  prometheus:
+  portal_prometheus:
     # in case of a reverse proxy insert the full path to prometheus here
     # command:
       # - --web.external-url=https://portal-dev.denbi.de/prom
+      # But if you do so also uncomment the following, since using command line
+      # arguments seems to change the default location of the config file
+      # - --config.file=/etc/prometheus/prometheus.yml
     volumes:
-      - "./prod/global_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
-  influx_db:
-    env_file:
-      - ./prod/influx_db.env
+      - "./prod/portal_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+  portal_grafana:
     volumes:
-      - portal_influxdb:/var/lib/influxdb
-  grafana:
-    env_file:
-      - ./prod/grafana.env
-  credits:
-    volumes:
-      - "./prod/credits.toml:/etc/credits.toml:ro"
-volumes:
-  portal_influxdb:
+      - "./prod/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"

@@ -1,61 +1,67 @@
 # contains configuation for a production setup a at site with access to an
 # openstack instance
 ---
-version: "3.4"
+version: "3.5"
 services:
-  exporter:
-    image: tluettje/os_project_usage_exporter:v4
-    env_file:
-      - usage-openrc
+  site_exporter:
+    image: "tluettje/os_project_usage_exporter:${EXPORTER_TAG}"
+    container_name: project_usage_exporter
     networks:
       - usage_exporter
     environment:
-      # You must NOT change this once you started the service in production mode
-      # since it is passed through to openstack to request the total usages
-      # since this date. Changing could lead to a lower value than before
-      - USAGE_EXPORTER_START_DATE=2018-12-01
+      - USAGE_EXPORTER_START_DATE
+      - USAGE_EXPORTER_UPDATE_INTERVAL
+      - USAGE_EXPORTER_PROJECT_DOMAINS
+      - USAGE_EXPORTER_PROJECT_ID
     expose:
       - "8080"
   # prometheus instance responsible for monitoring
-  prometheus:
-    image: prom/prometheus:v2.7.1
+  site_prometheus:
+    image: "prom/prometheus:${PROMETHEUS_TAG}"
     # use self build Dockerfile as alternative
-    # build: prod/local_prometheus
+    # build: prod/site_prometheus
+    container_name: project_usage_prometheus
     networks:
-      - usage_exporter
+      usage_exporter:
+        aliases:
+          - prometheus
     expose:
       - "9090"
-    volumes:
-      - "./prod/local_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
-  prometheus_proxy:
+  site_prometheus_proxy:
     # use the one below to have haproxy debug log directly to stdout including
     # every request with auth headers
-    # image: mminks/haproxy-docker-logging
-    image: haproxy:1.8-alpine
+    # image: mminks/haproxy-docker-logging:latest
+    image: "haproxy:${HAPROXY_TAG}"
     # use self build Dockerfile as alternative
     # build: prod/haproxy
+    container_name: project_usage_proxy
     networks:
       - usage_exporter
     expose:
-      # this port must be reachable by the global prometheus instance inside the
-      # portal
+      # this port must be reachable by the portal prometheus instance
       # also setup some encryption to or in front of it, otherwise the whole
       # authentication stuff is useless
       - "80"
     volumes:
-      - "./prod/haproxy/etc/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
-  grafana:
-    image: grafana/grafana:5.4.2
+      - "./prod/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
+    environment:
+      - BEARER_TOKEN
+      - WHITELISTED_MATCH_QUERY
+  site_grafana:
+    image: "grafana/grafana:${GRAFANA_TAG}"
     # use self build Dockerfile as alternative
     # build: prod/grafana
+    container_name: project_usage_grafana
     depends_on:
-      - prometheus
+      - site_prometheus
     networks:
       - usage_exporter
     volumes:
-      - ./prod/grafana/provisioning/:/etc/grafana/provisioning
-    env_file:
-      - ./prod/grafana.env
+      - "./shared/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro"
+      - "./shared/grafana/project_usages.json:/etc/grafana/provisioning/dashboards/project_usages.json:ro"
+    environment:
+      - GF_SECURITY_ADMIN_USER
+      - GF_SECURITY_ADMIN_PASSWORD
     expose:
       - "3000"
 networks:

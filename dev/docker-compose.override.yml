@@ -1,135 +1,143 @@
 ---
-version: "3.4"
+version: "3.5"
 services:
   # sites producing dummy data for development environment without access to a
   # real openstack instance
-  # aliases have to be used to prevent name collisions, in production only one
-  # `local_prometheus` will be present at one location
-  # {{{ site-a
-  site-a_exporter:
-    env_file:
-      - dev/local_exporter.env
+  # it makes sense to use a different profile per emulated site
+  # or at least a different value for OS_EXPORTER_PROJECT_DOMAINS
+  # see https://github.com/gilbus/OS_project_usage_exporter/
+  # using network aliases to be able to use the same config files, in the end
+  # (as in production) there will be only one `usage_exporter` and one
+  # `prometheus` (at least inside the defined network)
+  #
+  # For the first emulated site redefine/reuse the already defined site_*
+  # services from docker-compose.site.yml
+  # site-b is already defined as a dummy location
+  # To emulate further sites:
+  # 1. copy-paste the `{{{site-b [...] }}} part`
+  # 2. rename site-b to site-c
+  # (3.) if going further than c you need to additional networks at the bottom
+  # of this file perform some copy-paste in dev/haproxy/haproxy.cfg as well as
+  # dev/portal_prometheus/prometheus.yml
+  #
+  # Prometheus-Ports: 9091 -> site_a, 9092 -> site_b ...
+  # Grafana-Ports: 3001 -> site_a, 3002 -> site_b ...
+  site_exporter:
+    container_name: site-a_exporter
     environment:
-      # it makes sense to use a different profile per emulated site
-      # or at least a different value for OS_EXPORTER_PROJECT_DOMAINS
-      # see https://github.com/gilbus/OS_project_usage_exporter/
-      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/high_usage.toml
-    image: tluettje/os_project_usage_exporter:v4
+      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/credits_machines.toml
     networks:
       site-a:
         aliases:
           - usage_exporter
     expose:
       - "8080"
-  site-a_prom_proxy:
-    image: mminks/haproxy-docker-logging
-    networks:
-      - site-a
-      - public
-    expose:
-      - "80"
+  site_prometheus:
+    container_name: site-a_prometheus
     volumes:
-      - "./dev/haproxy/etc:/usr/local/etc/haproxy:ro"
-  # local prometheus instance responsible for monitoring
-  site-a_prometheus:
-    image: prom/prometheus:v2.7.1
-    volumes:
-      - "./dev/local_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./dev/site_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
     networks:
       site-a:
         aliases:
-          - prometheus
+          - site_prometheus
     ports:
-      # 8081 -> site_a, 8082 -> site_b ...
-      - "8081:9090"
+      - "9091:9090"
     expose:
       - "9090"
-  site-a_grafana:
-    image: grafana/grafana:5.4.0
+  site_prometheus_proxy:
+    # use a different image which logs every request to stdout
+    image: mminks/haproxy-docker-logging:latest
+    container_name: site-a_prometheus_proxy
+    networks:
+      - site-a
+      - public
+    volumes:
+      - "./dev/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
+  site_grafana:
+    container_name: site-a_grafana
     depends_on:
-      - site-a_prometheus
+      - site_prometheus
     networks:
       - site-a
     volumes:
-      - ./dev/grafana/provisioning/:/etc/grafana/provisioning
-    env_file:
-      - ./dev/grafana.env
+      - "./dev/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
     ports:
-      # 3001 -> site_a, 3002 -> site_b ...
       - "3001:3000"
-  # }}}
   # {{{ site-b
   site-b_exporter:
-    env_file:
-      - dev/local_exporter.env
+    image: tluettje/os_project_usage_exporter:${EXPORTER_TAG}
+    container_name: site-b_exporter
     environment:
+      - USAGE_EXPORTER_START_DATE
+      - USAGE_EXPORTER_UPDATE_INTERVAL
+      - USAGE_EXPORTER_PROJECT_DOMAINS
+      - USAGE_EXPORTER_PROJECT_ID
       # it makes sense to use a different profile per emulated site
       # or at least a different value for OS_EXPORTER_PROJECT_DOMAINS
       # see https://github.com/gilbus/OS_project_usage_exporter/
-      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/credits_machines.toml
-    image: tluettje/os_project_usage_exporter:v4
+      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/high_usage.toml
     networks:
       site-b:
         aliases:
           - usage_exporter
     expose:
       - "8080"
-  site-b_prom_proxy:
-    image: mminks/haproxy-docker-logging
+  site-b_prometheus_proxy:
+    image: mminks/haproxy-docker-logging:latest
+    container_name: site-b_prometheus_proxy
     networks:
       - site-b
       - public
     expose:
       - "80"
     volumes:
-      - "./dev/haproxy/etc:/usr/local/etc/haproxy:ro"
-  # local prometheus instance responsible for monitoring
+      - "./dev/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
+    environment:
+      - BEARER_TOKEN
   site-b_prometheus:
-    image: prom/prometheus:v2.7.1
+    image: prom/prometheus:${PROMETHEUS_TAG}
+    container_name: site-b_prometheus
     volumes:
-      - "./dev/local_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./dev/site_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
     networks:
       site-b:
         aliases:
-          - prometheus
+          - site_prometheus
     ports:
-      # 8081 -> site_a, 8082 -> site_b ...
-      - "8082:9090"
+      - "9092:9090"
     expose:
       - "9090"
   site-b_grafana:
-    image: grafana/grafana:5.4.0
+    image: grafana/grafana:${GRAFANA_TAG}
+    container_name: site-b_grafana
     depends_on:
       - site-b_prometheus
     networks:
       - site-b
     volumes:
-      - ./dev/grafana/provisioning/:/etc/grafana/provisioning
-    env_file:
-      - ./dev/grafana.env
+      - "./dev/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
+      - "./shared/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro"
+      - "./shared/grafana/project_usages.json:/etc/grafana/provisioning/dashboards/project_usages.json:ro"
+    environment:
+      - GF_SECURITY_ADMIN_USER
+      - GF_SECURITY_ADMIN_PASSWORD
     ports:
-      # 3001 -> site_a, 3002 -> site_b ...
       - "3002:3000"
   # }}}
-  prometheus:
+  portal_prometheus:
     volumes:
-      - "./dev/global_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./dev/portal_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
     ports:
-      - "80:9090"
+      - "9090:9090"
     networks:
       - public
-  influx_db:
-    env_file:
-      - ./dev/influx_db.env
-  grafana:
-    env_file:
-      - ./dev/grafana.env
+  portal_grafana:
     ports:
       - "3000:3000"
-  credits:
     volumes:
-      - "./prod/credits.toml:/etc/credits.toml:ro"
+      - "./prod/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
 networks:
   site-a:
   site-b:
+  site-c:
   public:

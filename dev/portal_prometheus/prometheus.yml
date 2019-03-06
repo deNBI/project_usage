@@ -18,24 +18,25 @@ scrape_configs:
         - '{job="project_usages",__name__=~"project_.*_usage"}'
 
     static_configs:
-      - targets: ['site-a_prom_proxy']
+      - targets: ['site-a_prometheus_proxy']
         labels:
           location: site-a
           location_id: 8487
-      - targets: ['site-b_prom_proxy']
+      - targets: ['site-b_prometheus_proxy']
         labels:
           location: site-b
           location_id: 8456
-      - targets: ['site-c_prom_proxy']
+      - targets: ['site-c_prometheus_proxy']
         labels:
           location: site-c
+          location_id: 8456
 
     bearer_token: "DontUseThisInProduction"
 
 remote_write:
   # yamllint disable-line rule:line-length
-  - url: "http://influx_db:8086/api/v1/prom/write?db=portal_prometheus&u=prometheus&p=secret"
+  - url: "http://portal_prometheus_influxdb:8086/api/v1/prom/write?db=portal_prometheus&u=prometheus&p=secret"
 
 remote_read:
   # yamllint disable-line rule:line-length
-  - url: "http://influx_db:8086/api/v1/prom/read?db=portal_prometheus&u=prometheus&p=secret"
+  - url: "http://portal_prometheus_influxdb:8086/api/v1/prom/read?db=portal_prometheus&u=prometheus&p=secret"
