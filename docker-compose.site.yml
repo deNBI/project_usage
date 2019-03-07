@@ -45,7 +45,7 @@ services:
     volumes:
       - "./prod/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
     environment:
-      - BEARER_TOKEN
+      - PORTAL_AUTH_TOKEN
       - WHITELISTED_MATCH_QUERY
   site_grafana:
     image: "grafana/grafana:${GRAFANA_TAG}"

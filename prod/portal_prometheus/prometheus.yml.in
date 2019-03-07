@@ -25,7 +25,7 @@ scrape_configs:
 
     static_configs:
 
-    bearer_token: "$PROMETHEUS_AUTH_TOKEN"
+    bearer_token: "${PORTAL_AUTH_TOKEN}"
 
 remote_write:
   # yamllint disable-line rule:line-length

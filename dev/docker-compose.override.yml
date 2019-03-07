@@ -93,7 +93,7 @@ services:
     volumes:
       - "./dev/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
     environment:
-      - BEARER_TOKEN
+      - PORTAL_AUTH_TOKEN
   site-b_prometheus:
     image: prom/prometheus:${PROMETHEUS_TAG}
     container_name: site-b_prometheus
