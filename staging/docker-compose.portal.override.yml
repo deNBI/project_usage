@@ -3,7 +3,7 @@ version: "3.5"
 services:
   portal_prometheus:
     command:
-      - "--web.external-url=${STAGIN_SITE_PUBLIC_URL}/${PORTAL_PROMETHEUS_SUBPATH}"
+      - "--web.external-url=${STAGING_SITE_PUBLIC_URL}/${PORTAL_PROMETHEUS_SUBPATH}"
       # But if you do so also uncomment the following, since using command line
       # arguments seems to change the default location of the config file
       - "--config.file=/etc/prometheus/prometheus.yml"
