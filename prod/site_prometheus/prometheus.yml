@@ -25,4 +25,4 @@ scrape_configs:
         - '{__name__=~"project_.*_usage"}'
 
     static_configs:
-      - targets: ['exporter:8080']
+      - targets: ['site_exporter:8080']
