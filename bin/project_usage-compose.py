@@ -197,7 +197,7 @@ def main() -> int:
     if args.keep_env:
         env = environ
     else:
-        env = parse_env_files(needed_env_files)  # type: ignore
+        env = {**environ, **parse_env_files(needed_env_files)}  # type: ignore
     if args.print_env:
         print(format_env(env))
         return 0
