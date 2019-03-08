@@ -8,11 +8,11 @@ i.e. `logs`, `start` ...
 
 import logging
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
-from os import execve
+from os import environ, execve
 from pathlib import Path
 from shutil import which
 from sys import argv
-from typing import Dict
+from typing import Dict, Mapping
 
 __author__ = "gilbus"
 __license__ = "MIT"
@@ -78,7 +78,7 @@ def parse_env_files(env_files: Dict[Path, Path]) -> Dict[str, str]:
     return env
 
 
-def format_env(env: Dict[str, str], separator: str = "\n") -> str:
+def format_env(env: Mapping[str, str], separator: str = "\n") -> str:
     return separator.join(
         "{key}={value}".format(key=key, value="'{}'".format(value) if value else "")
         for key, value in env.items()
@@ -94,6 +94,12 @@ def main() -> int:
     )
     parser.add_argument(
         "-v", "--verbose", action="store_true", help="Increase verbosity"
+    )
+    parser.add_argument(
+        "-k",
+        "--keep-env",
+        action="store_true",
+        help="Do not parse any *.env files, only use existing environment variables.",
     )
 
     subparsers = parser.add_subparsers(
@@ -159,7 +165,10 @@ def main() -> int:
         needed_compose_files = prod_files[args.stack]
         needed_env_files = env_files[args.stack]
 
-    env = parse_env_files(needed_env_files)
+    if args.keep_env:
+        env = environ
+    else:
+        env = parse_env_files(needed_env_files)  # type: ignore
     if args.print_env:
         print(format_env(env))
         return 0
