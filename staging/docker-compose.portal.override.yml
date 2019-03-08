@@ -9,3 +9,8 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
     volumes:
       - "./staging/portal_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+
+networks:
+  portal:
+    external: true
+    name: portal_default
