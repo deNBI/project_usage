@@ -46,7 +46,6 @@ services:
       - "./prod/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
     environment:
       - PORTAL_AUTH_TOKEN
-      - WHITELISTED_MATCH_QUERY
   site_grafana:
     image: "grafana/grafana:${GRAFANA_TAG}"
     # use self build Dockerfile as alternative
