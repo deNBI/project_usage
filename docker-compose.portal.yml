@@ -66,8 +66,14 @@ services:
       timeout: 10s
       retries: 3
       start_period: 20s
-    volumes:
-      - "./shared/credits.toml:/etc/credits.toml:ro"
+    environment:
+      - INFLUXDB_DB
+      - INFLUXDB_USER
+      - INFLUXDB_USER_PASSWORD
+      - INFLUXDB_HOST
+      - OS_CREDITS_PERUN_LOGIN
+      - OS_CREDITS_PERUN_PASSWORD
+      - OS_CREDITS_PERUN_VO_ID
     depends_on:
       - portal_influxdb
 
