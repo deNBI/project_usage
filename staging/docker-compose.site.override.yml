@@ -1,0 +1,9 @@
+---
+version: "3.5"
+services:
+  site_exporter:
+    env_file:
+      - usage-openrc
+  site_prometheus_proxy:
+    ports:
+      - "${SITE_PROXY_PUBLIC_PORT}:80"

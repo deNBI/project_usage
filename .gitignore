@@ -23,6 +23,7 @@ tags
 .shared.env
 .portal.env
 .site.env
+.staging.env
 
 # file where configuration must be inserted
 prod/portal_prometheus/prometheus.yml
