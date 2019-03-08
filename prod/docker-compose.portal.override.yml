@@ -1,5 +1,5 @@
 ---
-version: "3.4"
+version: "3.5"
 services:
   portal_prometheus:
     # in case of a reverse proxy insert the full path to prometheus here
@@ -9,7 +9,7 @@ services:
       # arguments seems to change the default location of the config file
       # - --config.file=/etc/prometheus/prometheus.yml
     volumes:
-      - "./prod/portal_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+      - "${PROMETHEUS_FILE_PATH}:/etc/prometheus/prometheus.yml:ro"
   portal_grafana:
     volumes:
       - "./prod/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
