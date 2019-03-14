@@ -27,6 +27,8 @@ tags
 
 # file where configuration must be inserted
 prod/portal_prometheus/prometheus.yml
+# file where configuration must be inserted
+staging/portal_prometheus/prometheus.yml
 
 # openstack exporter credentials
 usage-openrc
