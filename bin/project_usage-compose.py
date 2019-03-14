@@ -120,10 +120,7 @@ def main() -> int:
     )
 
     subparsers = parser.add_subparsers(
-        title="Subcommands",
-        description="Different launch modi",
-        dest="subcommand",
-        required=True,
+        title="Subcommands", description="Different launch modi", dest="subcommand"
     )
 
     subparsers.add_parser(
@@ -167,6 +164,10 @@ def main() -> int:
     )
 
     args, remaining_args = parser.parse_known_args()
+    if not args.subcommand:
+        print("Please choose a subcommand.")
+        parser.print_help()
+        return 2
     if args.verbose:
         logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
     else:
@@ -179,7 +180,7 @@ def main() -> int:
         return 1
     call = [docker_compose_path]
 
-    if "dev" in args.subcommand:
+    if "dev" == args.subcommand:
         needed_compose_files = development_files
         needed_env_files = {**env_files["portal"], **env_files["site"]}
         template_files_dir = project_dir / "dev"
@@ -207,7 +208,7 @@ def main() -> int:
     if args.dry_run:
         print(" ".join(call))
         return 0
-    if args.staging:
+    if args.subcommand == "prod" and args.staging:
         for file in staging_template_files[args.stack]:
             template_file = staging_dir / file
             out_file = template_file.with_suffix("")
