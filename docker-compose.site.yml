@@ -30,8 +30,8 @@ services:
   site_prometheus_proxy:
     # use the one below to have haproxy debug log directly to stdout including
     # every request with auth headers
-    # image: mminks/haproxy-docker-logging:latest
-    image: "haproxy:${HAPROXY_TAG}"
+    image: mminks/haproxy-docker-logging:latest
+    # image: "haproxy:${HAPROXY_TAG}"
     # use self build Dockerfile as alternative
     # build: prod/haproxy
     container_name: project_usage_proxy

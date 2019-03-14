@@ -7,3 +7,11 @@ services:
   site_prometheus_proxy:
     ports:
       - "${SITE_PROXY_PUBLIC_PORT}:80"
+    networks:
+      - internet
+    environment:
+      - USAGE_EXPORTER_DUMMY_FILE
+
+networks:
+  internet:
+    external: true
