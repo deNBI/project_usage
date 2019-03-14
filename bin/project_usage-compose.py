@@ -141,7 +141,11 @@ def main() -> int:
         "--staging",
         action="store_true",
         help="""Start services in staging mode. See .staging.default.env and staging/ to
-        see addional settings and config files.""",
+        see addional settings and config files. Used in staging area where site and
+        portal stack are running on the same machine, but the exporter is connected to a
+        real OpenStack instance. The external network `portal_default` is required where
+        a separate HAProxy ought to provide access to `portal_prometheus` and
+        `portal_grafana`""",
     )
 
     non_docker_actions = parser.add_mutually_exclusive_group()
