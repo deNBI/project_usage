@@ -13,3 +13,8 @@ services:
   portal_grafana:
     volumes:
       - "./prod/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
+
+networks:
+  portal:
+    external: true
+    name: portal_default
