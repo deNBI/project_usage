@@ -155,8 +155,8 @@ def main() -> int:
         "--print-env",
         action="store_true",
         help="""Print the parsed environment variables separated by newline, can be
-        used to export i tinto the current shell by `export $({} print-env |
-        xargs)""".format(
+        used to export it into the current shell by `export $({} print-env |
+        xargs)`""".format(
             argv[0]
         ),
     )
