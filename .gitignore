@@ -1,24 +1,3 @@
-# Swap
-[._]*.s[a-v][a-z]
-[._]*.sw[a-p]
-[._]s[a-rt-v][a-z]
-[._]ss[a-gi-z]
-[._]sw[a-p]
-
-# Session
-Session.vim
-
-# project settings
-/.vim/
-
-# Temporary
-.netrwhist
-*~
-# Auto-generated tag files
-tags
-# Persistent undo
-[._]*.un~
-
 # customized env files
 .shared.env
 .portal.env
@@ -30,8 +9,15 @@ prod/portal_prometheus/prometheus.yml
 # file where configuration must be inserted
 staging/portal_prometheus/prometheus.yml
 
+# data folders, but track .gitkeep files
+data/
+!data/**/.gitkeep
+
 # openstack exporter credentials
 usage-openrc
+
+
+##############################################################################
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -148,3 +134,24 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Session
+Session.vim
+
+# project settings
+/.vim/
+
+# Temporary
+.netrwhist
+*~
+# Auto-generated tag files
+tags
+# Persistent undo
+[._]*.un~

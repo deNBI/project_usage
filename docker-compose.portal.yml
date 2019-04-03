@@ -28,7 +28,7 @@ services:
       - INFLUXDB_USER
       - INFLUXDB_USER_PASSWORD
     volumes:
-      - project_usage_influxdb:/var/lib/influxdb
+      - "$INFLUXDB_VOLUME_PATH:/var/lib/influxdb"
       - "./prod/credits_influx_subscription.sh:/docker-entrypoint-initdb.d/01-sub.sh:ro"
     expose:
       - "8086"
@@ -76,9 +76,6 @@ services:
       - OS_CREDITS_PERUN_VO_ID
     depends_on:
       - portal_influxdb
-
-volumes:
-  project_usage_influxdb:
 
 networks:
   portal:
