@@ -1,0 +1,14 @@
+---
+version: "3.5"
+services:
+  site_exporter:
+    env_file:
+      - usage-openrc
+  site_prometheus_proxy:
+    networks:
+      - fake_internet
+networks:
+  # emulates the public network over which the portal_prometheus connects with
+  # the site_prometheus_proxy
+  fake_internet:
+    external: true

@@ -1,0 +1,18 @@
+---
+version: "3.5"
+services:
+  portal_prometheus:
+    command:
+      - "--web.external-url=${STAGING_SITE_PUBLIC_URL}/${PORTAL_PROMETHEUS_SUBPATH}"
+      # But if you do so also uncomment the following, since using command line
+      # arguments seems to change the default location of the config file
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    volumes:
+      - "./staging-dev/portal_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+    networks:
+      - fake_internet
+networks:
+  # emulates the public network over which the portal_prometheus connects with
+  # the site_prometheus_proxy
+  fake_internet:
+    external: true

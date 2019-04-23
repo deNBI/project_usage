@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Helper script to collect the different *.env files and prepare the docker-compose
-call in production or dev mode, site and/or production part. Non `*.default.env` files
-will be priorized and all unknown arguments will be appended to the docker-compose call,
+Helper script to collect the different *.env files and prepare the docker-compose call
+in production or dev mode, site and/or production part. Non `*.default.env` files will
+be prioritized and all unknown arguments will be appended to the docker-compose call,
 i.e. `logs`, `start` ...
 """
 
@@ -24,6 +24,7 @@ project_dir = Path(__file__).parent.parent
 dev_dir = project_dir / "dev"
 prod_dir = project_dir / "prod"
 staging_dir = project_dir / "staging"
+staging_dev_dir = project_dir / "staging-dev"
 
 shared_env_file = {project_dir / ".shared.default.env": project_dir / ".shared.env"}
 # mapping between default/example files and files with customized values
@@ -59,8 +60,13 @@ staging_files = {
     "portal": [staging_dir / "docker-compose.portal.override.yml"],
     "site": [staging_dir / "docker-compose.site.override.yml"],
 }
-# dev should never need template files
-staging_template_files = {
+staging_dev_files = {
+    "portal": [staging_dev_dir / "docker-compose.portal.override.yml"],
+    "site": [staging_dev_dir / "docker-compose.site.override.yml"],
+}
+
+# staging and dev should never need template files
+staging_template_files: Dict[str, List[Path]] = {
     # given without 'prod' or 'staging' and assuming that the internal file structure is
     # the same
     "portal": [Path("portal_prometheus") / "prometheus.yml.in"],
@@ -137,15 +143,24 @@ def main() -> int:
         description="""Run either the `site` or the `portal` stack in production mode.""",
     )
     prod_parser.add_argument("stack", choices=("portal", "site"))
-    prod_parser.add_argument(
+    staging_args = prod_parser.add_mutually_exclusive_group()
+    staging_args.add_argument(
         "--staging",
         action="store_true",
         help="""Start services in staging mode. See .staging.default.env and staging/ to
-        see addional settings and config files. Used in staging area where site and
+        see additional settings and config files. Used in staging area where site and
         portal stack are running on the same machine, but the exporter is connected to a
         real OpenStack instance. The external network `portal_default` is required where
         a separate HAProxy ought to provide access to `portal_prometheus` and
         `portal_grafana`""",
+    )
+    staging_args.add_argument(
+        "--staging-dev",
+        action="store_true",
+        help="""Same as staging but for deploying to the local machine. An additional
+        network called 'fake_internet' is needed to connect the site_prometheus_proxy
+        and the portal_prometheus instance to emulate the public network. Create it via
+        `docker network create fake_internet`""",
     )
 
     non_docker_actions = parser.add_mutually_exclusive_group()
@@ -198,6 +213,10 @@ def main() -> int:
             # Currently only 'prometheus.yml.in' therefore only `staging/` has to be
             # checked
             template_files_dir = project_dir / "staging"
+        elif args.staging_dev:
+            needed_compose_files.extend(staging_dev_files[args.stack])
+            needed_env_files.update({**env_files["staging"]})
+            template_files_dir = project_dir / "staging-dev"
 
     if args.keep_env:
         env = environ
@@ -212,9 +231,9 @@ def main() -> int:
     if args.dry_run:
         print(" ".join(call))
         return 0
-    if args.subcommand == "prod" and args.staging:
+    if args.subcommand == "prod" and (args.staging or args.staging_dev):
         for file in staging_template_files[args.stack]:
-            template_file = staging_dir / file
+            template_file = template_files_dir / file
             out_file = template_file.with_suffix("")
             # if out_file.exists():
             #    continue

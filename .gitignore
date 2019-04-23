@@ -8,6 +8,8 @@
 prod/portal_prometheus/prometheus.yml
 # file where configuration must be inserted
 staging/portal_prometheus/prometheus.yml
+# file where configuration must be inserted
+staging-dev/portal_prometheus/prometheus.yml
 
 # data folders, but track .gitkeep files
 data/
