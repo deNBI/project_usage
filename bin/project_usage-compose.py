@@ -66,13 +66,13 @@ staging_dev_files = {
 }
 
 # staging and dev should never need template files
-staging_template_files: Dict[str, List[Path]] = {
+staging_template_files = {
     # given without 'prod' or 'staging' and assuming that the internal file structure is
     # the same
     "portal": [Path("portal_prometheus") / "prometheus.yml.in"],
     # no template files currently, can all be done at runtime via env vars
     "site": [],
-}
+}  # type: Dict[str, List[Path]]
 
 
 def parse_env_files(env_files: Dict[Path, Path]) -> Dict[str, str]:
