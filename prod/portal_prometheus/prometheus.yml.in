@@ -27,12 +27,12 @@ scrape_configs:
 
     bearer_token: "${PORTAL_AUTH_TOKEN}"
 
-  - job_name: 'portal_grafana'
+  - job_name: 'grafana'
     honor_labels: true
     static_configs:
       - targets: ['portal_grafana:3000']
 
-  - job_name: 'portal_credits'
+  - job_name: 'credits'
     honor_labels: true
     static_configs:
       - targets: ['portal_credits']
