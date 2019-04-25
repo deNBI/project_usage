@@ -1,6 +1,6 @@
 ---
 global:
-  scrape_interval: 60s  # By default, scrape targets every 15 seconds.
+  scrape_interval: 15s  # By default, scrape targets every 15 seconds.
   evaluation_interval: 15s  # By default, scrape targets every 15 seconds.
   # scrape_timeout is set to the global default (10s).
 
@@ -32,6 +32,16 @@ scrape_configs:
           location_id: 8456
 
     bearer_token: "DontUseThisInProduction"
+
+  - job_name: 'portal_grafana'
+    honor_labels: true
+    static_configs:
+      - targets: ['portal_grafana:3000']
+
+  - job_name: 'portal_credits'
+    honor_labels: true
+    static_configs:
+      - targets: ['portal_credits']
 
 remote_write:
   # yamllint disable-line rule:line-length

@@ -58,7 +58,9 @@ services:
     depends_on:
       - site_prometheus
     networks:
-      - site-a
+      site-a:
+        aliases:
+          - site_grafana
     volumes:
       - "./dev/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
     ports:
@@ -113,7 +115,9 @@ services:
     depends_on:
       - site-b_prometheus
     networks:
-      - site-b
+      site-b:
+        aliases:
+          - site_grafana
     volumes:
       - "./dev/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
       - "./shared/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro"

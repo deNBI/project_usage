@@ -31,6 +31,16 @@ scrape_configs:
 
     bearer_token: "${PORTAL_AUTH_TOKEN}"
 
+  - job_name: 'portal_grafana'
+    honor_labels: true
+    static_configs:
+      - targets: ['portal_grafana:3000']
+
+  - job_name: 'portal_credits'
+    honor_labels: true
+    static_configs:
+      - targets: ['portal_credits']
+
 remote_write:
   # yamllint disable-line rule:line-length
   - url: "http://portal_prometheus_influxdb:8086/api/v1/prom/write?db=portal_prometheus&u=${INFLUXDB_USER}&p=${INFLUXDB_USER_PASSWORD}"

@@ -31,3 +31,8 @@ scrape_configs:
 
     static_configs:
       - targets: ['usage_exporter:8080']
+
+  - job_name: 'grafana'
+    honor_labels: true
+    static_configs:
+      - targets: ['site_grafana:3000']
