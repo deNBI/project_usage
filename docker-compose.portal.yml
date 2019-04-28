@@ -15,7 +15,7 @@ services:
   portal_influxdb:
     image: "influxdb:${INFLUXDB_TAG}"
     # a fixed name is necessary for the credits service to connect
-    container_name: portal_prometheus_influxdb
+    container_name: portal_influxdb
     networks:
       - portal
     environment:

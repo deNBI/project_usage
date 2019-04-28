@@ -45,8 +45,8 @@ scrape_configs:
 
 remote_write:
   # yamllint disable-line rule:line-length
-  - url: "http://portal_prometheus_influxdb:8086/api/v1/prom/write?db=portal_prometheus&u=prometheus&p=secret"
+  - url: "http://portal_influxdb:8086/api/v1/prom/write?db=portal_prometheus&u=prometheus&p=secret"
 
 remote_read:
   # yamllint disable-line rule:line-length
-  - url: "http://portal_prometheus_influxdb:8086/api/v1/prom/read?db=portal_prometheus&u=prometheus&p=secret"
+  - url: "http://portal_influxdb:8086/api/v1/prom/read?db=portal_prometheus&u=prometheus&p=secret"
