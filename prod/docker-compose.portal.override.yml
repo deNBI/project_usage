@@ -1,6 +1,9 @@
 ---
 version: "3.5"
 services:
+  portal_influxdb:
+    volumes:
+      - "$INFLUXDB_VOLUME_PATH:/var/lib/influxdb"
   portal_prometheus:
     # in case of a reverse proxy insert the full path to prometheus here
     # command:

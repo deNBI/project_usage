@@ -29,7 +29,6 @@ services:
       - INFLUXDB_USER_PASSWORD
       - CREDITS_HISTORY_DB
     volumes:
-      - "$INFLUXDB_VOLUME_PATH:/var/lib/influxdb"
       - "./prod/setup_influxdb.sh:/docker-entrypoint-initdb.d/01-setup.sh:ro"
     expose:
       - "8086"
