@@ -1,0 +1,6 @@
+[os_credits_2]
+domain = 'elixir'
+machines = [
+# de.NBI.highmem.medium
+  {ram=128, cpus=14},
+]

@@ -17,19 +17,17 @@ scrape_configs:
         # do not collect any metrics besides the one we are interested in
         - '{job="project_usages",__name__=~"project_.*_usage"}'
 
+    # in production location_id differ from each target but as long as no
+    # project runs at multiple locations its fine for development
     static_configs:
       - targets: ['site-a_prometheus_proxy']
         labels:
           location: site-a
-          location_id: 8487
+          location_id: 8676
       - targets: ['site-b_prometheus_proxy']
         labels:
           location: site-b
-          location_id: 8456
-      - targets: ['site-c_prometheus_proxy']
-        labels:
-          location: site-c
-          location_id: 8456
+          location_id: 8676
 
     bearer_token: "DontUseThisInProduction"
 

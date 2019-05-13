@@ -24,8 +24,10 @@ services:
   # Grafana-Ports: 3001 -> site_a, 3002 -> site_b ...
   site_exporter:
     container_name: site-a_exporter
+    volumes:
+      - "./dev/exporter_machines_1.toml:/machines.toml:ro"
     environment:
-      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/credits_machines.toml
+      - USAGE_EXPORTER_DUMMY_FILE=/machines.toml
     networks:
       site-a:
         aliases:
@@ -69,15 +71,14 @@ services:
   site-b_exporter:
     image: tluettje/os_project_usage_exporter:${EXPORTER_TAG}
     container_name: site-b_exporter
+    volumes:
+      - "./dev/exporter_machines_2.toml:/machines.toml:ro"
     environment:
+      - USAGE_EXPORTER_DUMMY_FILE=/machines.toml
       - USAGE_EXPORTER_START_DATE
       - USAGE_EXPORTER_UPDATE_INTERVAL
       - USAGE_EXPORTER_PROJECT_DOMAINS
       - USAGE_EXPORTER_PROJECT_ID
-      # it makes sense to use a different profile per emulated site
-      # or at least a different value for OS_EXPORTER_PROJECT_DOMAINS
-      # see https://github.com/gilbus/OS_project_usage_exporter/
-      - USAGE_EXPORTER_DUMMY_FILE=/code/resources/high_usage.toml
     networks:
       site-b:
         aliases:
@@ -140,6 +141,21 @@ services:
       - "3000:3000"
     volumes:
       - "./prod/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
+  portal_credits:
+    environment:
+      - MAIL_NOT_STARTTLS=1
+      - MAIL_SMTP_SERVER=portal_smtp_server
+      - MAIL_SMTP_PORT=8025
+  smtp_server:
+    image: "python:3.7-alpine"
+    container_name: portal_smtp_server
+    command: python3 -m smtpd -n -c DebuggingServer 0.0.0.0:25
+    environment:
+      - PYTHONUNBUFFERED=1
+    expose:
+      - "25"
+    networks:
+      - portal
 networks:
   site-a:
   site-b:
