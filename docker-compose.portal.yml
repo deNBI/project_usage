@@ -75,6 +75,7 @@ services:
       - OS_CREDITS_PERUN_LOGIN
       - OS_CREDITS_PERUN_PASSWORD
       - OS_CREDITS_PERUN_VO_ID
+      - NOTIFICATION_TO_OVERWRITE
     depends_on:
       - portal_influxdb
 
