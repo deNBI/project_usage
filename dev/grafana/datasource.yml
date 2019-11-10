@@ -19,7 +19,7 @@ datasources:
     # <int> org id. will default to orgId 1 if not specified
     orgId: 1
     # <string> url
-    url: http://site_prometheus:9090
+    url: http://site_prometheus:9093
     # <string> database password, if used
     # <bool> enable/disable basic auth
     basicAuth: false

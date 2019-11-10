@@ -26,7 +26,7 @@ services:
         aliases:
           - prometheus
     expose:
-      - "9090"
+      - "9093"
   site_prometheus_proxy:
     # use the one below to have haproxy debug log directly to stdout including
     # every request with auth headers

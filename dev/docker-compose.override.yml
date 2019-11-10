@@ -43,9 +43,9 @@ services:
         aliases:
           - site_prometheus
     ports:
-      - "9091:9090"
+      - "9091:9093"
     expose:
-      - "9090"
+      - "9093"
   site_prometheus_proxy:
     # use a different image which logs every request to stdout
     image: mminks/haproxy-docker-logging:latest
@@ -107,9 +107,9 @@ services:
         aliases:
           - site_prometheus
     ports:
-      - "9092:9090"
+      - "9092:9093"
     expose:
-      - "9090"
+      - "9093"
   site-b_grafana:
     image: grafana/grafana:${GRAFANA_TAG}
     container_name: site-b_grafana
@@ -133,7 +133,7 @@ services:
     volumes:
       - "./dev/portal_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
     ports:
-      - "9090:9090"
+      - "9093:9093"
     networks:
       - public
   portal_grafana:
