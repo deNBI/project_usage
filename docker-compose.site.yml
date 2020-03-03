@@ -4,7 +4,7 @@
 version: "3.5"
 services:
   site_exporter:
-    image: "tluettje/os_project_usage_exporter:${EXPORTER_TAG}"
+    image: "localhost:5000/os_project_usage_exporter:latest"
     container_name: project_usage_exporter
     networks:
       - usage_exporter
