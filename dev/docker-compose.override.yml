@@ -79,6 +79,8 @@ services:
       - USAGE_EXPORTER_UPDATE_INTERVAL
       - USAGE_EXPORTER_PROJECT_DOMAINS
       - USAGE_EXPORTER_PROJECT_ID
+      - USAGE_EXPORTER_PROJECT_MB_WEIGHTS
+      - USAGE_EXPORTER_VCPU_WEIGHTS
     networks:
       site-b:
         aliases:
@@ -143,7 +145,7 @@ services:
       - "./prod/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
   portal_credits:
     ports:
-      - "8000:80"
+      - "8002:80"
     environment:
       - MAIL_NOT_STARTTLS=1
       - MAIL_SMTP_SERVER=portal_smtp_server

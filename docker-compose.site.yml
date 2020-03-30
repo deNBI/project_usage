@@ -13,6 +13,8 @@ services:
       - USAGE_EXPORTER_UPDATE_INTERVAL
       - USAGE_EXPORTER_PROJECT_DOMAINS
       - USAGE_EXPORTER_PROJECT_ID
+      - USAGE_EXPORTER_PROJECT_MB_WEIGHTS
+      - USAGE_EXPORTER_VCPU_WEIGHTS
     expose:
       - "8080"
   # prometheus instance responsible for monitoring
