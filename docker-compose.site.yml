@@ -17,6 +17,8 @@ services:
       - USAGE_EXPORTER_VCPU_WEIGHTS
       - USAGE_EXPORTER_SIMPLE_VM_PROJECT_ID
       - USAGE_EXORTER_SIMPLE_VM_PROJECT_TAG
+      - USAGE_EXPORTER_WEIGHTS_UPDATE_ENDPOINT
+      - USAGE_EXPORTER_WEIGHT_UPDATE_FREQUENCY
     expose:
       - "8080"
   # prometheus instance responsible for monitoring
