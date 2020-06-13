@@ -4,7 +4,7 @@
 version: "3.5"
 services:
   site_exporter:
-    image: "localhost:5000/os_project_usage_exporter:latest"
+    image: "denbicloud/os_project_usage_exporter:2.0.3"
     container_name: project_usage_exporter
     networks:
       - usage_exporter
