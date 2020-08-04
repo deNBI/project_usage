@@ -22,70 +22,74 @@ services:
   #
   # Prometheus-Ports: 9091 -> site_a, 9092 -> site_b ...
   # Grafana-Ports: 3001 -> site_a, 3002 -> site_b ...
-  site_exporter:
-    container_name: site-a_exporter
-    volumes:
-      - "./dev/exporter_machines_1.toml:/machines.toml:ro"
-    environment:
-      - USAGE_EXPORTER_DUMMY_FILE=/machines.toml
-    networks:
-      site-a:
-        aliases:
-          - usage_exporter
-    expose:
-      - "8080"
-  site_prometheus:
-    container_name: site-a_prometheus
-    volumes:
-      - "./dev/site_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
-    networks:
-      site-a:
-        aliases:
-          - site_prometheus
-    ports:
-      - "9091:9090"
-    expose:
-      - "9090"
-  site_prometheus_proxy:
-    # use a different image which logs every request to stdout
-    image: mminks/haproxy-docker-logging:latest
-    container_name: site-a_prometheus_proxy
-    networks:
-      - site-a
-      - public
-    volumes:
-      - "./dev/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
-  site_grafana:
-    container_name: site-a_grafana
-    depends_on:
-      - site_prometheus
-    networks:
-      site-a:
-        aliases:
-          - site_grafana
-    volumes:
-      - "./dev/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
-    ports:
-      - "3001:3000"
+#  site_exporter:
+#    container_name: site-a_exporter
+#    volumes:
+#      - "./dev/exporter_machines_1.toml:/machines.toml:ro"
+#    environment:
+#      - USAGE_EXPORTER_DUMMY_FILE=/machines.toml
+#    networks:
+#      site-a:
+#        aliases:
+#          - usage_exporter
+#    expose:
+#      - "8080"
+#  site_prometheus:
+#    container_name: site-a_prometheus
+#    volumes:
+#      - "./dev/site_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+#    networks:
+#      site-a:
+#        aliases:
+#          - site_prometheus
+#    ports:
+#      - "9091:9090"
+#    expose:
+#      - "9090"
+#  site_prometheus_proxy:
+#    # use a different image which logs every request to stdout
+#    image: mminks/haproxy-docker-logging:latest
+#    container_name: site-a_prometheus_proxy
+#    networks:
+#      - site-a
+#      - public
+#    volumes:
+#      - "./dev/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
+#  site_grafana:
+#    container_name: site-a_grafana
+#    depends_on:
+#      - site_prometheus
+#    networks:
+#      site-a:
+#        aliases:
+#          - site_grafana
+#    volumes:
+#      - "./dev/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
+#    ports:
+#      - "3001:3000"
   # {{{ site-b
-  site-b_exporter:
-    image: tluettje/os_project_usage_exporter:${EXPORTER_TAG}
+  site_exporter:
+    image: os_project_usage_exporter:latest
     container_name: site-b_exporter
     volumes:
-      - "./dev/exporter_machines_2.toml:/machines.toml:ro"
+      - "./dev/dummy_cc.toml:/dummy_cc.toml"
+      - "./dev/dummy_weights.toml:/dummy_weights.toml"
     environment:
-      - USAGE_EXPORTER_DUMMY_FILE=/machines.toml
+      - USAGE_EXPORTER_DUMMY_FILE=/dummy_cc.toml
+      - USAGE_EXPORTER_DUMMY_WEIGHTS_FILE=/dummy_weights.toml
       - USAGE_EXPORTER_START_DATE
       - USAGE_EXPORTER_UPDATE_INTERVAL
       - USAGE_EXPORTER_PROJECT_DOMAINS
       - USAGE_EXPORTER_PROJECT_ID
+      - USAGE_EXPORTER_PROJECT_MB_WEIGHTS
+      - USAGE_EXPORTER_VCPU_WEIGHTS
     networks:
       site-b:
         aliases:
           - usage_exporter
     expose:
       - "8080"
-  site-b_prometheus_proxy:
+  site_prometheus_proxy:
     image: mminks/haproxy-docker-logging:latest
     container_name: site-b_prometheus_proxy
     networks:
@@ -97,7 +101,7 @@ services:
       - "./dev/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
     environment:
       - PORTAL_AUTH_TOKEN
-  site-b_prometheus:
+  site_prometheus:
     image: prom/prometheus:${PROMETHEUS_TAG}
     container_name: site-b_prometheus
     volumes:
@@ -107,14 +111,14 @@ services:
         aliases:
           - site_prometheus
     ports:
-      - "9092:9090"
+      - "9092:9093"
     expose:
       - "9090"
-  site-b_grafana:
+  site_grafana:
     image: grafana/grafana:${GRAFANA_TAG}
     container_name: site-b_grafana
     depends_on:
-      - site-b_prometheus
+      - site_prometheus
     networks:
       site-b:
         aliases:
@@ -133,7 +137,7 @@ services:
     volumes:
       - "./dev/portal_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
     ports:
-      - "9090:9090"
+      - "9091:9090"
     networks:
       - public
   portal_grafana:
@@ -142,8 +146,9 @@ services:
     volumes:
       - "./prod/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
   portal_credits:
+    image: os_credits-dev
     ports:
-      - "8000:80"
+      - "8002:80"
     environment:
       - MAIL_NOT_STARTTLS=1
       - MAIL_SMTP_SERVER=portal_smtp_server

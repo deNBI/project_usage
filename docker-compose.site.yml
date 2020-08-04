@@ -4,7 +4,7 @@
 version: "3.5"
 services:
   site_exporter:
-    image: "tluettje/os_project_usage_exporter:${EXPORTER_TAG}"
+    image: "denbicloud/os_project_usage_exporter:2.0.3"
     container_name: project_usage_exporter
     networks:
       - usage_exporter
@@ -13,6 +13,12 @@ services:
       - USAGE_EXPORTER_UPDATE_INTERVAL
       - USAGE_EXPORTER_PROJECT_DOMAINS
       - USAGE_EXPORTER_PROJECT_ID
+      - USAGE_EXPORTER_PROJECT_MB_WEIGHTS
+      - USAGE_EXPORTER_VCPU_WEIGHTS
+      - USAGE_EXPORTER_SIMPLE_VM_PROJECT_ID
+      - USAGE_EXORTER_SIMPLE_VM_PROJECT_TAG
+      - USAGE_EXPORTER_WEIGHTS_UPDATE_ENDPOINT
+      - USAGE_EXPORTER_WEIGHT_UPDATE_FREQUENCY
     expose:
       - "8080"
   # prometheus instance responsible for monitoring
@@ -26,7 +32,7 @@ services:
         aliases:
           - prometheus
     expose:
-      - "9090"
+      - "9093"
   site_prometheus_proxy:
     # use the one below to have haproxy debug log directly to stdout including
     # every request with auth headers
