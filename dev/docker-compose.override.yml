@@ -111,9 +111,7 @@ services:
         aliases:
           - site_prometheus
     ports:
-      - "9092:9093"
-    expose:
-      - "9090"
+      - "9092:9090"
   site_grafana:
     image: grafana/grafana:${GRAFANA_TAG}
     container_name: site-b_grafana
