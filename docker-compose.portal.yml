@@ -58,7 +58,7 @@ services:
       - "./shared/grafana/project_usages.json:/etc/grafana/provisioning/dashboards/project_usages.json:ro"
 
   portal_credits:
-    image: "tluettje/os_credits:${CREDITS_TAG}"
+    image: "denbicloud/os_credits:${CREDITS_TAG}"
     container_name: portal_credits
     restart: always
     networks:
