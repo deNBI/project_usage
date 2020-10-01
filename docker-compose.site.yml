@@ -4,7 +4,7 @@
 version: "3.5"
 services:
   site_exporter:
-    image: "denbicloud/os_project_usage_exporter:2.0.3"
+    image: "denbicloud/os_project_usage_exporter:${EXPORTER_TAG}"
     container_name: project_usage_exporter
     networks:
       - usage_exporter
@@ -19,8 +19,12 @@ services:
       - USAGE_EXORTER_SIMPLE_VM_PROJECT_TAG
       - USAGE_EXPORTER_WEIGHTS_UPDATE_ENDPOINT
       - USAGE_EXPORTER_WEIGHT_UPDATE_FREQUENCY
+      - USAGE_EXPORTER_START_DATE_ENDPOINT
+      - USAGE_EXPORTER_VERBOSE_MODE
     expose:
       - "8080"
+    ports:
+      - "${EXPORTER_PORT}:8080"
   # prometheus instance responsible for monitoring
   site_prometheus:
     image: "prom/prometheus:${PROMETHEUS_TAG}"
@@ -33,6 +37,8 @@ services:
           - prometheus
     expose:
       - "9093"
+    ports:
+      - "9093:9090"
   site_prometheus_proxy:
     # use the one below to have haproxy debug log directly to stdout including
     # every request with auth headers
