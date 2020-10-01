@@ -40,7 +40,7 @@ machines = [
 domain_id="123elixirDomain"
 
 [[elixir.projects]]
-project_name="portal-pool-dev"
+project_name="portal-pool-dev-a"
 project_id="123devsimplevm"
 
     # creates a {..., machines = [{ram=,cpus=,...}, {ram=,cpus=,...}], ...} entry with data below
@@ -61,7 +61,7 @@ project_id="123devsimplevm"
     instance_id = "8"
 
 [[elixir.projects]]
-project_name="portal-pool"
+project_name="portal-pool-a"
 project_id="123realsimplevm"
 
     [[elixir.projects.machines]]
@@ -79,8 +79,8 @@ project_id="123realsimplevm"
     instance_id = "10"
 
     [[elixir.projects.machines]]
-    ram = 80
-    cpus = 40
+    ram = 8
+    cpus = 4
     existence = 2020-07-15T14:30:00
     metadata = {project_name = 'HisSVM', project_id = ''}
     instance_id = "11"

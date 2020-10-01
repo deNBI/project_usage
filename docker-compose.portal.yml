@@ -12,7 +12,7 @@ services:
     expose:
       - "9090"
     ports:
-      - "9091:9090"
+      - "9095:9090"
 
   portal_influxdb:
     image: "influxdb:${INFLUXDB_TAG}"

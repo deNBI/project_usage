@@ -5,7 +5,7 @@ services:
   # real openstack instance
   # it makes sense to use a different profile per emulated site
   # or at least a different value for OS_EXPORTER_PROJECT_DOMAINS
-  # see https://github.com/gilbus/OS_project_usage_exporter/
+  # see https://github.com/deNBI/OS_project_usage_exporter/
   # using network aliases to be able to use the same config files, in the end
   # (as in production) there will be only one `usage_exporter` and one
   # `prometheus` (at least inside the defined network)
@@ -22,58 +22,24 @@ services:
   #
   # Prometheus-Ports: 9091 -> site_a, 9092 -> site_b ...
   # Grafana-Ports: 3001 -> site_a, 3002 -> site_b ...
-#  site_exporter:
-#    container_name: site-a_exporter
-#    volumes:
-#      - "./dev/exporter_machines_1.toml:/machines.toml:ro"
-#    environment:
-#      - USAGE_EXPORTER_DUMMY_FILE=/machines.toml
-#    networks:
-#      site-a:
-#        aliases:
-#          - usage_exporter
-#    expose:
-#      - "8080"
-#  site_prometheus:
-#    container_name: site-a_prometheus
-#    volumes:
-#      - "./dev/site_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
-#    networks:
-#      site-a:
-#        aliases:
-#          - site_prometheus
-#    ports:
-#      - "9091:9090"
-#    expose:
-#      - "9090"
-#  site_prometheus_proxy:
-#    # use a different image which logs every request to stdout
-#    image: mminks/haproxy-docker-logging:latest
-#    container_name: site-a_prometheus_proxy
-#    networks:
-#      - site-a
-#      - public
-#    volumes:
-#      - "./dev/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
-#  site_grafana:
-#    container_name: site-a_grafana
-#    depends_on:
-#      - site_prometheus
-#    networks:
-#      site-a:
-#        aliases:
-#          - site_grafana
-#    volumes:
-#      - "./dev/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
-#    ports:
-#      - "3001:3000"
-  # {{{ site-b
+
+  dockerhost:
+    image: qoomon/docker-host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    restart: on-failure
+    networks:
+      - site-a
+      - site-b
+
+  ### site-a ###
   site_exporter:
-    image: os_project_usage_exporter:latest
-    container_name: site-b_exporter
+    image: ${DEV_EXPORTER_SITE_A}
+    container_name: site-a_exporter
     volumes:
-      - "./dev/dummy_cc.toml:/dummy_cc.toml"
-      - "./dev/dummy_weights.toml:/dummy_weights.toml"
+      - "./dev/dummy_files/dummy_cc_site_a.toml:/dummy_cc.toml"
+      - "./dev/dummy_files/dummy_weights.toml:/dummy_weights.toml"
     environment:
       - USAGE_EXPORTER_DUMMY_FILE=/dummy_cc.toml
       - USAGE_EXPORTER_DUMMY_WEIGHTS_FILE=/dummy_weights.toml
@@ -83,13 +49,74 @@ services:
       - USAGE_EXPORTER_PROJECT_ID
       - USAGE_EXPORTER_PROJECT_MB_WEIGHTS
       - USAGE_EXPORTER_VCPU_WEIGHTS
+      - USAGE_EXPORTER_START_DATE_ENDPOINT
+    networks:
+      site-a:
+        aliases:
+          - usage_exporter
+    expose:
+      - "8080"
+
+  site_prometheus:
+    container_name: site-a_prometheus
+    volumes:
+      - "./dev/site_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+    networks:
+      site-a:
+        aliases:
+          - site_prometheus
+    ports:
+      - "9091:9090"
+
+  site_prometheus_proxy:
+    # use a different image which logs every request to stdout
+    image: mminks/haproxy-docker-logging:latest
+    container_name: site-a_prometheus_proxy
+    networks:
+      - site-a
+      - public
+    volumes:
+      - "./dev/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
+
+  site_grafana:
+    container_name: site-a_grafana
+    depends_on:
+      - site_prometheus
+    networks:
+      site-a:
+        aliases:
+          - site_grafana
+    volumes:
+      - "./dev/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
+    ports:
+      - "3001:3000"
+
+
+  ### site-b ###
+  site-b_exporter:
+    image: ${DEV_EXPORTER_SITE_B}
+    container_name: site-b_exporter
+    volumes:
+      - "./dev/dummy_files/dummy_cc_site_b.toml:/dummy_cc.toml"
+      - "./dev/dummy_files/dummy_weights.toml:/dummy_weights.toml"
+    environment:
+      - USAGE_EXPORTER_DUMMY_FILE=/dummy_cc.toml
+      - USAGE_EXPORTER_DUMMY_WEIGHTS_FILE=/dummy_weights.toml
+      - USAGE_EXPORTER_START_DATE
+      - USAGE_EXPORTER_UPDATE_INTERVAL
+      - USAGE_EXPORTER_PROJECT_DOMAINS
+      - USAGE_EXPORTER_PROJECT_ID
+      - USAGE_EXPORTER_PROJECT_MB_WEIGHTS
+      - USAGE_EXPORTER_VCPU_WEIGHTS
+      - USAGE_EXPORTER_START_DATE_ENDPOINT
     networks:
       site-b:
         aliases:
           - usage_exporter
     expose:
       - "8080"
-  site_prometheus_proxy:
+
+  site-b_prometheus_proxy:
     image: mminks/haproxy-docker-logging:latest
     container_name: site-b_prometheus_proxy
     networks:
@@ -101,7 +128,8 @@ services:
       - "./dev/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
     environment:
       - PORTAL_AUTH_TOKEN
-  site_prometheus:
+
+  site-b_prometheus:
     image: prom/prometheus:${PROMETHEUS_TAG}
     container_name: site-b_prometheus
     volumes:
@@ -112,7 +140,8 @@ services:
           - site_prometheus
     ports:
       - "9092:9090"
-  site_grafana:
+
+  site-b_grafana:
     image: grafana/grafana:${GRAFANA_TAG}
     container_name: site-b_grafana
     depends_on:
@@ -130,26 +159,33 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD
     ports:
       - "3002:3000"
-  # }}}
+
+
+  ### portal ###
   portal_prometheus:
     volumes:
       - "./dev/portal_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
     ports:
-      - "9091:9090"
+      - "9095:9090"
     networks:
       - public
+
   portal_grafana:
     ports:
       - "3000:3000"
+    environment:
+      - GF_SERVER_ROOT_URL=
     volumes:
       - "./prod/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
+
   portal_credits:
-    image: os_credits-dev
+    image: ${DEV_OS_CREDITS}
     ports:
       - "8002:80"
     environment:
       - MAIL_NOT_STARTTLS=1
       - MAIL_SMTP_SERVER=portal_smtp_server
+
   smtp_server:
     image: "python:3.7-alpine"
     container_name: portal_smtp_server
@@ -160,6 +196,8 @@ services:
       - "25"
     networks:
       - portal
+
+
 networks:
   site-a:
   site-b:
