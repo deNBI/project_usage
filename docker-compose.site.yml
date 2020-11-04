@@ -36,9 +36,7 @@ services:
         aliases:
           - prometheus
     expose:
-      - "9093"
-    ports:
-      - "9093:9090"
+      - "9090"
   site_prometheus_proxy:
     # use the one below to have haproxy debug log directly to stdout including
     # every request with auth headers
@@ -54,6 +52,8 @@ services:
       # also setup some encryption to or in front of it, otherwise the whole
       # authentication stuff is useless
       - "80"
+    ports:
+      - "${PROXY_PORT}:80"
     volumes:
       - "./prod/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
     environment:
