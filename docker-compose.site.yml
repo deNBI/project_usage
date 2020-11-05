@@ -56,25 +56,6 @@ services:
       - "./prod/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
     environment:
       - PORTAL_AUTH_TOKEN
-  site_grafana:
-    image: "grafana/grafana:${GRAFANA_TAG}"
-    # use self build Dockerfile as alternative
-    # build: prod/grafana
-    container_name: project_usage_grafana
-    depends_on:
-      - site_prometheus
-    networks:
-      - usage_exporter
-    volumes:
-      - "./shared/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro"
-      - "./shared/grafana/project_usages.json:/etc/grafana/provisioning/dashboards/project_usages.json:ro"
-    environment:
-      - GF_SECURITY_ADMIN_USER
-      - GF_SECURITY_ADMIN_PASSWORD
-    expose:
-      - "3000"
-    ports:
-      - "${GRAFANA_PORT}:3000"
 
 networks:
   usage_exporter:

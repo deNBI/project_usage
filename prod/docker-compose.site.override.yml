@@ -10,6 +10,3 @@ services:
   site_prometheus_proxy:
     volumes:
       - "./prod/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
-  site_grafana:
-    volumes:
-      - "./prod/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
