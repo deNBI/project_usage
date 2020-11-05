@@ -6,11 +6,11 @@ services:
       - "$INFLUXDB_VOLUME_PATH:/var/lib/influxdb"
   portal_prometheus:
     # in case of a reverse proxy insert the full path to prometheus here
-    # command:
-      # - --web.external-url=https://portal-dev.denbi.de/prom
+    command:
+      - --web.external-url=https://cloud.denbi.de/prom
       # But if you do so also uncomment the following, since using command line
       # arguments seems to change the default location of the config file
-      # - --config.file=/etc/prometheus/prometheus.yml
+      - --config.file=/etc/prometheus/prometheus.yml
     volumes:
       - "${PROMETHEUS_FILE_PATH}:/etc/prometheus/prometheus.yml:ro"
   portal_grafana:
