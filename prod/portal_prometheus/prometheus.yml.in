@@ -17,6 +17,7 @@ scrape_configs:
   - job_name: 'denbi_cloud_project_usage'
     honor_labels: true
     metrics_path: '/federate'
+    scheme: 'https'
 
     params:
       'match[]':
