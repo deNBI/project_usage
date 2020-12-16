@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+        interval: "weekly"
+    target-branch: "dev"
+    reviewers:
+      - "deNBI/portal-dev"
+    open-pull-requests-limit: 15
+
+
