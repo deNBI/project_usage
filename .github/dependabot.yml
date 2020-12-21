@@ -7,6 +7,9 @@ updates:
     target-branch: "master"
     reviewers:
       - "deNBI/portal-dev"
+    commit_message:
+      prefix: "feat"
+      include_scope: true
     open-pull-requests-limit: 15
 
 
