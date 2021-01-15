@@ -78,6 +78,7 @@ services:
       - OS_CREDITS_PERUN_PASSWORD
       - OS_CREDITS_PERUN_VO_ID
       - NOTIFICATION_TO_OVERWRITE
+      - OS_CREDITS_PROJECT_WHITELIST
     depends_on:
       - portal_influxdb
 
