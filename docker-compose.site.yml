@@ -2,12 +2,22 @@
 # openstack instance
 ---
 version: "3.5"
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    max-size: "100m"
+    max-file: "5"
+
 services:
   site_exporter:
     image: "denbicloud/os_project_usage_exporter:${EXPORTER_TAG}"
     container_name: project_usage_exporter
     networks:
       - usage_exporter
+    logging:
+      *default-logging
     environment:
       - USAGE_EXPORTER_START_DATE
       - USAGE_EXPORTER_UPDATE_INTERVAL
@@ -31,6 +41,8 @@ services:
     # use self build Dockerfile as alternative
     # build: prod/site_prometheus
     container_name: project_usage_prometheus
+    logging:
+      *default-logging
     networks:
       usage_exporter:
         aliases:
@@ -45,6 +57,8 @@ services:
     # use self build Dockerfile as alternative
     # build: prod/haproxy
     container_name: project_usage_proxy
+    logging:
+      *default-logging
     networks:
       - usage_exporter
     expose:
@@ -63,6 +77,8 @@ services:
     # use self build Dockerfile as alternative
     # build: prod/grafana
     container_name: project_usage_grafana
+    logging:
+      *default-logging
     depends_on:
       - site_prometheus
     networks:
