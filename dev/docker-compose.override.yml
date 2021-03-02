@@ -89,76 +89,76 @@ services:
     volumes:
       - "./dev/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
     ports:
-      - "3001:3000"
-
-
-  ### site-b ###
-  site-b_exporter:
-    image: ${DEV_EXPORTER_SITE_B}
-    container_name: site-b_exporter
-    volumes:
-      - "./dev/dummy_files/dummy_cc_site_b.toml:/dummy_cc.toml"
-      - "./dev/dummy_files/dummy_weights.toml:/dummy_weights.toml"
-    environment:
-      - USAGE_EXPORTER_DUMMY_FILE=/dummy_cc.toml
-      - USAGE_EXPORTER_DUMMY_WEIGHTS_FILE=/dummy_weights.toml
-      - USAGE_EXPORTER_START_DATE
-      - USAGE_EXPORTER_UPDATE_INTERVAL
-      - USAGE_EXPORTER_PROJECT_DOMAINS
-      - USAGE_EXPORTER_PROJECT_ID
-      - USAGE_EXPORTER_PROJECT_MB_WEIGHTS
-      - USAGE_EXPORTER_VCPU_WEIGHTS
-      - USAGE_EXPORTER_START_DATE_ENDPOINT
-    networks:
-      site-b:
-        aliases:
-          - usage_exporter
-    expose:
-      - "8080"
-
-  site-b_prometheus_proxy:
-    image: mminks/haproxy-docker-logging:latest
-    container_name: site-b_prometheus_proxy
-    networks:
-      - site-b
-      - public
-    expose:
-      - "80"
-    volumes:
-      - "./dev/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
-    environment:
-      - PORTAL_AUTH_TOKEN
-
-  site-b_prometheus:
-    image: prom/prometheus:${PROMETHEUS_TAG}
-    container_name: site-b_prometheus
-    volumes:
-      - "./dev/site_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
-    networks:
-      site-b:
-        aliases:
-          - site_prometheus
-    ports:
-      - "9092:9090"
-
-  site-b_grafana:
-    image: grafana/grafana:${GRAFANA_TAG}
-    container_name: site-b_grafana
-    depends_on:
-      - site_prometheus
-    networks:
-      site-b:
-        aliases:
-          - site_grafana
-    volumes:
-      - "./dev/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
-      - "./shared/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro"
-      - "./shared/grafana/project_usages.json:/etc/grafana/provisioning/dashboards/project_usages.json:ro"
-    environment:
-      - GF_SECURITY_ADMIN_USER
-      - GF_SECURITY_ADMIN_PASSWORD
-    ports:
       - "3002:3000"
+
+
+#  ### site-b ###
+#  site-b_exporter:
+#    image: ${DEV_EXPORTER_SITE_B}
+#    container_name: site-b_exporter
+#    volumes:
+#      - "./dev/dummy_files/dummy_cc_site_b.toml:/dummy_cc.toml"
+#      - "./dev/dummy_files/dummy_weights.toml:/dummy_weights.toml"
+#    environment:
+#      - USAGE_EXPORTER_DUMMY_FILE=/dummy_cc.toml
+#      - USAGE_EXPORTER_DUMMY_WEIGHTS_FILE=/dummy_weights.toml
+#      - USAGE_EXPORTER_START_DATE
+#      - USAGE_EXPORTER_UPDATE_INTERVAL
+#      - USAGE_EXPORTER_PROJECT_DOMAINS
+#      - USAGE_EXPORTER_PROJECT_ID
+#      - USAGE_EXPORTER_PROJECT_MB_WEIGHTS
+#      - USAGE_EXPORTER_VCPU_WEIGHTS
+#      - USAGE_EXPORTER_START_DATE_ENDPOINT
+#    networks:
+#      site-b:
+#        aliases:
+#          - usage_exporter
+#    expose:
+#      - "8080"
+#
+#  site-b_prometheus_proxy:
+#    image: mminks/haproxy-docker-logging:latest
+#    container_name: site-b_prometheus_proxy
+#    networks:
+#      - site-b
+#      - public
+#    expose:
+#      - "80"
+#    volumes:
+#      - "./dev/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"
+#    environment:
+#      - PORTAL_AUTH_TOKEN
+#
+#  site-b_prometheus:
+#    image: prom/prometheus:${PROMETHEUS_TAG}
+#    container_name: site-b_prometheus
+#    volumes:
+#      - "./dev/site_prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+#    networks:
+#      site-b:
+#        aliases:
+#          - site_prometheus
+#    ports:
+#      - "9092:9090"
+#
+#  site-b_grafana:
+#    image: grafana/grafana:${GRAFANA_TAG}
+#    container_name: site-b_grafana
+#    depends_on:
+#      - site_prometheus
+#    networks:
+#      site-b:
+#        aliases:
+#          - site_grafana
+#    volumes:
+#      - "./dev/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro"
+#      - "./shared/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro"
+#      - "./shared/grafana/project_usages.json:/etc/grafana/provisioning/dashboards/project_usages.json:ro"
+#    environment:
+#      - GF_SECURITY_ADMIN_USER
+#      - GF_SECURITY_ADMIN_PASSWORD
+#    ports:
+#      - "3002:3000"
 
 
   ### portal ###
@@ -172,7 +172,7 @@ services:
 
   portal_grafana:
     ports:
-      - "3000:3000"
+      - "3005:3000"
     environment:
       - GF_SERVER_ROOT_URL=
     volumes:
@@ -182,6 +182,8 @@ services:
     image: ${DEV_OS_CREDITS}
     ports:
       - "8002:80"
+#    volumes:
+#      - ${CREDITS_SRC_FILE_PATH}:${CREDITS_SRC_DEST}:ro
     environment:
       - MAIL_NOT_STARTTLS=1
       - MAIL_SMTP_SERVER=portal_smtp_server
