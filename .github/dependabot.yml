@@ -4,7 +4,7 @@ updates:
     directory: "/"
     schedule:
         interval: "weekly"
-    target-branch: "master"
+    target-branch: "dev"
     reviewers:
       - "deNBI/portal-dev"
     commit-message:
