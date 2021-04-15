@@ -96,6 +96,8 @@ services:
       - NOTIFICATION_TO_OVERWRITE
       - OS_CREDITS_PROJECT_WHITELIST
       - API_KEY
+      - MAIL_SMTP_SERVER
+      - MAIL_SMTP_PORT
     depends_on:
       - portal_influxdb
 
