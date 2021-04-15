@@ -1,4 +1,4 @@
-FROM prom/prometheus:v2.25.2
+FROM prom/prometheus:v2.26.0
 FROM influxdb:1.8.4-alpine
 FROM grafana/grafana:7.5.2
 FROM denbicloud/os_credits:1.2.1
