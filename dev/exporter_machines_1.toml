@@ -1,8 +1,0 @@
-[os_credits_1]
-domain = 'elixir'
-machines = [
-# de.NBI.default
-  {ram = 4, cpus = 2},
-# de.NBI.medium
-  {ram = 14, cpus = 32},
-]

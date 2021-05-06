@@ -4,6 +4,8 @@
 .site.env
 .staging.env
 
+.idea
+
 # file where configuration must be inserted
 prod/portal_prometheus/prometheus.yml
 # file where configuration must be inserted

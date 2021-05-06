@@ -1,5 +1,13 @@
 ---
 version: "3.5"
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    max-size: "100m"
+    max-file: "5"
+
 services:
   # global prometheus instance scraping data from the local instances
   portal_prometheus:
@@ -9,6 +17,8 @@ services:
       portal:
         aliases:
           - prometheus
+    logging:
+      *default-logging
     expose:
       - "9090"
 
@@ -18,6 +28,8 @@ services:
     container_name: portal_influxdb
     networks:
       - portal
+    logging:
+      *default-logging
     environment:
       - INFLUXDB_GRAPHITE_ENABLED
       - INFLUXDB_REPORTING_DISABLED
@@ -28,6 +40,7 @@ services:
       - INFLUXDB_USER
       - INFLUXDB_USER_PASSWORD
       - CREDITS_HISTORY_DB
+      - INFLUXDB_DATA_CACHE_MAX_MEMORY_SIZE
     volumes:
       - "./prod/setup_influxdb.sh:/docker-entrypoint-initdb.d/01-setup.sh:ro"
     expose:
@@ -37,7 +50,7 @@ services:
       interval: 2m
       timeout: 10s
       retries: 3
-     # start_period: 60s
+      start_period: 60s
     restart: always
 
   portal_grafana:
@@ -45,6 +58,8 @@ services:
     container_name: portal_grafana
     depends_on:
       - portal_prometheus
+    logging:
+      *default-logging
     networks:
       - portal
     environment:
@@ -56,17 +71,19 @@ services:
       - "./shared/grafana/project_usages.json:/etc/grafana/provisioning/dashboards/project_usages.json:ro"
 
   portal_credits:
-    image: "tluettje/os_credits:${CREDITS_TAG}"
+    image: "denbicloud/os_credits:${CREDITS_TAG}"
     container_name: portal_credits
     restart: always
     networks:
       - portal
+    logging:
+      *default-logging
     healthcheck:
       test: wget http://localhost/ping -qO /dev/null || return 1
       interval: 2m
       timeout: 10s
       retries: 3
-      # start_period: 20s
+      start_period: 20s
     environment:
       - INFLUXDB_DB
       - INFLUXDB_USER
@@ -76,6 +93,10 @@ services:
       - OS_CREDITS_PERUN_PASSWORD
       - OS_CREDITS_PERUN_VO_ID
       - NOTIFICATION_TO_OVERWRITE
+      - OS_CREDITS_PROJECT_WHITELIST
+      - API_KEY
+      - MAIL_SMTP_SERVER
+      - MAIL_SMTP_PORT
     depends_on:
       - portal_influxdb
 
