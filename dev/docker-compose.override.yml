@@ -42,13 +42,11 @@ services:
       - "./dev/dummy_files/dummy_weights.toml:/dummy_weights.toml"
     environment:
       - USAGE_EXPORTER_DUMMY_FILE=/dummy_cc.toml
-      - USAGE_EXPORTER_DUMMY_WEIGHTS_FILE=/dummy_weights.toml
+#      - USAGE_EXPORTER_DUMMY_WEIGHTS_FILE=/dummy_weights.toml
       - USAGE_EXPORTER_START_DATE
       - USAGE_EXPORTER_UPDATE_INTERVAL
       - USAGE_EXPORTER_PROJECT_DOMAINS
       - USAGE_EXPORTER_PROJECT_ID
-      - USAGE_EXPORTER_PROJECT_MB_WEIGHTS
-      - USAGE_EXPORTER_VCPU_WEIGHTS
       - USAGE_EXPORTER_START_DATE_ENDPOINT
     networks:
       site-a:
