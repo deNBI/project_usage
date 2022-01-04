@@ -11,7 +11,7 @@ x-logging:
 services:
   # global prometheus instance scraping data from the local instances
   portal_prometheus:
-    image: "prom/prometheus:${PROMETHEUS_TAG}"
+    image: "prom/prometheus:v2.31.1"
     container_name: portal_prometheus
     networks:
       portal:
@@ -23,7 +23,7 @@ services:
       - "9090"
 
   portal_influxdb:
-    image: "influxdb:${INFLUXDB_TAG}"
+    image: "influxdb:1.8.10-alpine"
     # a fixed name is necessary for the credits service to connect
     container_name: portal_influxdb
     networks:
@@ -54,7 +54,7 @@ services:
     restart: always
 
   portal_grafana:
-    image: "grafana/grafana:${GRAFANA_TAG}"
+    image: "grafana/grafana:8.3.3"
     container_name: portal_grafana
     depends_on:
       - portal_prometheus
@@ -71,7 +71,7 @@ services:
       - "./shared/grafana/project_usages.json:/etc/grafana/provisioning/dashboards/project_usages.json:ro"
 
   portal_credits:
-    image: "denbicloud/os_credits:${CREDITS_TAG}"
+    image: "denbicloud/os_credits:1.2.2"
     container_name: portal_credits
     restart: always
     networks:
