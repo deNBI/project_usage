@@ -73,6 +73,7 @@ services:
   portal_credits:
     image: "denbicloud/os_credits:${CREDITS_TAG}"
     container_name: portal_credits
+    pull_policy: always
     restart: always
     networks:
       - portal
