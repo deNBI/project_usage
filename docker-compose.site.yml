@@ -12,7 +12,7 @@ x-logging:
 
 services:
   site_exporter:
-    image: "denbicloud/os_project_usage_exporter:${EXPORTER_TAG}"
+    image: "denbicloud/os_project_usage_exporter:2.3.0"
     container_name: project_usage_exporter
     networks:
       - usage_exporter
@@ -35,7 +35,7 @@ services:
       - "${EXPORTER_PORT}:8080"
   # prometheus instance responsible for monitoring
   site_prometheus:
-    image: "prom/prometheus:${PROMETHEUS_TAG}"
+    image: "prom/prometheus:v2.32.1"
     # use self build Dockerfile as alternative
     # build: prod/site_prometheus
     container_name: project_usage_prometheus
@@ -51,7 +51,7 @@ services:
     # use the one below to have haproxy debug log directly to stdout including
     # every request with auth headers
     # image: mminks/haproxy-docker-logging:latest
-    image: "haproxy:${HAPROXY_TAG}"
+    image: "haproxy:2.5.0-alpine"
     # use self build Dockerfile as alternative
     # build: prod/haproxy
     container_name: project_usage_proxy
@@ -71,7 +71,7 @@ services:
     environment:
       - PORTAL_AUTH_TOKEN
   site_grafana:
-    image: "grafana/grafana:${GRAFANA_TAG}"
+    image: "grafana/grafana:8.3.3"
     # use self build Dockerfile as alternative
     # build: prod/grafana
     container_name: project_usage_grafana
