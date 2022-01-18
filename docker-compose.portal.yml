@@ -23,7 +23,7 @@ services:
       - "9090"
 
   portal_influxdb:
-    image: "influxdb:1.8.10-alpine"
+    image: "influxdb:2.1.1-alpine"
     # a fixed name is necessary for the credits service to connect
     container_name: portal_influxdb
     networks:
