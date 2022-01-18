@@ -12,7 +12,7 @@ x-logging:
 
 services:
   site_exporter:
-    image: "denbicloud/os_project_usage_exporter:2.3.0"
+    image: "denbicloud/os_project_usage_exporter:2.4.0"
     container_name: project_usage_exporter
     networks:
       - usage_exporter
