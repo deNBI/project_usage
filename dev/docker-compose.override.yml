@@ -42,7 +42,7 @@ services:
       - "./dev/dummy_files/dummy_weights.toml:/dummy_weights.toml"
     environment:
       - USAGE_EXPORTER_DUMMY_FILE=/dummy_cc.toml
-#      - USAGE_EXPORTER_DUMMY_WEIGHTS_FILE=/dummy_weights.toml
+      - USAGE_EXPORTER_DUMMY_WEIGHTS_FILE=/dummy_weights.toml
       - USAGE_EXPORTER_START_DATE
       - USAGE_EXPORTER_UPDATE_INTERVAL
       - USAGE_EXPORTER_PROJECT_DOMAINS
@@ -180,8 +180,8 @@ services:
     image: ${DEV_OS_CREDITS}
     ports:
       - "8002:80"
-#    volumes:
-#      - ${CREDITS_SRC_FILE_PATH}:${CREDITS_SRC_DEST}:ro
+    volumes:
+      - ${CREDITS_SRC_FILE_PATH}:${CREDITS_SRC_DEST}:ro
     environment:
       - MAIL_NOT_STARTTLS=1
       - MAIL_SMTP_SERVER=portal_smtp_server

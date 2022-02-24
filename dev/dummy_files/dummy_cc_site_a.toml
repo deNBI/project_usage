@@ -8,8 +8,8 @@ domain_id = "default" # domain id
 # creates a projects: [{project_name:somename, project_id:someid, machines=[]}] entry with data below
 # use this format if none of the values inside a machine in machines is a dictionary
 [[default.projects]]
-project_name="MyOSP"
-project_id = '123MyOSP'
+project_name="test123321"
+project_id = 'test123321'
 machines = [
     # when existence = true, the machine is treated as if it was active since start-string (if start-string provided)
     # or time of script-start (if start-string not provided)
