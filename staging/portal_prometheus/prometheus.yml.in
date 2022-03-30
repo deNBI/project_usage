@@ -52,4 +52,4 @@ remote_write:
 
 remote_read:
   # yamllint disable-line rule:line-length
-  - url: "http://portal_promscale:9201/read""
+  - url: "http://portal_promscale:9201/read"
