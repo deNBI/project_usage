@@ -159,3 +159,4 @@ Session.vim
 tags
 # Persistent undo
 [._]*.un~
+db_data

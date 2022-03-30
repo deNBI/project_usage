@@ -29,13 +29,12 @@ services:
     networks:
       - portal
     environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_USER: postgres
-      POSTGRES_DB: credits_db
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - ./prod/setup_timescaledb.sh:/docker-entrypoint-initdb.d/setup_timescaledb.sh
-    ports:
-      - "5432:5432"
+      - ${POSTGRES_DATA_FOLDER}:/var/lib/postgresql/data/
   portal_promscale:
     container_name: portal_promscale
     image: timescale/promscale:latest
@@ -51,36 +50,6 @@ services:
       PROMSCALE_DB_CONNECT_RETRIES: 10
       PROMSCALE_WEB_TELEMETRY_PATH: /metrics-text
       PROMSCALE_DB_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=allow
-#  portal_influxdb:
-#    image: "influxdb:1.8.10-alpine"
-#    # a fixed name is necessary for the credits service to connect
-#    container_name: portal_influxdb
-#    networks:
-#      - portal
-#    logging:
-#      *default-logging
-#    environment:
-#      - INFLUXDB_GRAPHITE_ENABLED
-#      - INFLUXDB_REPORTING_DISABLED
-#      - INFLUXDB_DB
-#      - INFLUXDB_HTTP_AUTH_ENABLED
-#      - INFLUXDB_ADMIN_USER
-#      - INFLUXDB_ADMIN_PASSWORD
-#      - INFLUXDB_USER
-#      - INFLUXDB_USER_PASSWORD
-#      - CREDITS_HISTORY_DB
-#      - INFLUXDB_DATA_CACHE_MAX_MEMORY_SIZE
-#    volumes:
-#      - "./prod/setup_timescaledb.sh:/docker-entrypoint-initdb.d/01-setup.sh:ro"
-#    expose:
-#      - "8086"
-#    healthcheck:
-#      test: wget http://localhost:8086/ping -qO /dev/null || return 1
-#      interval: 2m
-#      timeout: 10s
-#      retries: 3
-#      start_period: 60s
-#    restart: always
 
   portal_grafana:
     image: "grafana/grafana:8.3.3"
@@ -100,7 +69,7 @@ services:
       - "./shared/grafana/project_usages.json:/etc/grafana/provisioning/dashboards/project_usages.json:ro"
 
   portal_credits:
-    image: "denbicloud/os_credits:${CREDITS_TAG}"
+    image: "denbicloud/os_credits:2.0.0"
     container_name: portal_credits
     restart: always
     networks:
@@ -119,14 +88,12 @@ services:
       - POSTGRES_PASSWORD
       - POSTGRES_HOST
       - POSTGRES_PORT
-      - OS_CREDITS_PERUN_LOGIN
-      - OS_CREDITS_PERUN_PASSWORD
-      - OS_CREDITS_PERUN_VO_ID
-      - NOTIFICATION_TO_OVERWRITE
       - OS_CREDITS_PROJECT_WHITELIST
       - API_KEY
-      - MAIL_SMTP_SERVER
-      - MAIL_SMTP_PORT
+      - API_CONTACT_KEY
+      - API_CONTACT_BASE_URL
+      - MAIL_CONTACT_URL
+      - METRICS_TO_BILL
     depends_on:
       - portal_timescaledb
       - portal_promscale
