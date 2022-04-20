@@ -1,4 +1,4 @@
-FROM grafana/grafana:8.4.3
+FROM grafana/grafana:8.4.7
 COPY provisioning/* /etc/grafana/provisioning/
 
 EXPOSE 3000

@@ -71,7 +71,7 @@ services:
     environment:
       - PORTAL_AUTH_TOKEN
   site_grafana:
-    image: "grafana/grafana:8.4.3"
+    image: "grafana/grafana:8.4.7"
     # use self build Dockerfile as alternative
     # build: prod/grafana
     container_name: project_usage_grafana
