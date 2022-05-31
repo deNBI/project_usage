@@ -11,7 +11,7 @@ x-logging:
 services:
   # global prometheus instance scraping data from the local instances
   portal_prometheus:
-    image: "prom/prometheus:v2.35.0"
+    image: "prom/prometheus:v2.36.0"
     container_name: portal_prometheus
     networks:
       portal:
