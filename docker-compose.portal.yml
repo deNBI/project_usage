@@ -34,7 +34,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - ./prod/setup_timescaledb.sh:/docker-entrypoint-initdb.d/setup_timescaledb.sh
-      - ${POSTGRES_DATA_FOLDER}:/var/lib/postgresql/data/
+      - ${POSTGRES_DATA_FOLDER}:/home/postgres/pgdata
   portal_promscale:
     container_name: portal_promscale
     image: "timescale/promscale:0.11.0"
