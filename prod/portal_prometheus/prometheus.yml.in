@@ -39,8 +39,12 @@ scrape_configs:
 
 remote_write:
   # yamllint disable-line rule:line-length
-  - url: "http://portal_influxdb:8086/api/v1/prom/write?db=portal_prometheus&u=${INFLUXDB_USER}&p=${INFLUXDB_USER_PASSWORD}"
+  - url: "http://portal_promscale:9201/write"
+    write_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'project_.*'
+        action: keep
 
 remote_read:
   # yamllint disable-line rule:line-length
-  - url: "http://portal_influxdb:8086/api/v1/prom/read?db=portal_prometheus&u=${INFLUXDB_USER}&p=${INFLUXDB_USER_PASSWORD}"
+  - url: "http://portal_promscale:9201/read"
