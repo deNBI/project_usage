@@ -7,8 +7,9 @@ i.e. `logs`, `start` ...
 """
 
 import logging
+import sys
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
-from os import environ, execve
+from os import environ, execve, path, makedirs, chown
 from pathlib import Path
 from shutil import which
 from string import Template
@@ -74,6 +75,9 @@ staging_template_files = {
     "site": [],
 }  # type: Dict[str, List[Path]]
 
+pg_owner = 1000
+pg_group = 1000
+
 
 def parse_env_files(env_files: Dict[Path, Path]) -> Dict[str, str]:
     env = {}
@@ -106,6 +110,35 @@ def format_env(env: Mapping[str, str], separator: str = "\n") -> str:
         "{key}={value}".format(key=key, value="'{}'".format(value) if value else "")
         for key, value in env.items()
     )
+
+
+def create_postgres_data_folder(env: Mapping[str, str]):
+    if "POSTGRES_DATA_FOLDER" not in env:
+        print("No POSTGRES_DATA_FOLDER provided. Exiting.")
+        sys.exit(1)
+    data_folder_path = Path(env['POSTGRES_DATA_FOLDER'])
+    print(f"Checking if {data_folder_path} exists and is a directory.")
+    data_folder_path_exists = data_folder_path.exists()
+    if data_folder_path_exists:
+        print(f"Exists. Checking if {data_folder_path} is a directory.")
+        data_folder_path_is_dir = data_folder_path.is_dir()
+        if not data_folder_path_is_dir:
+            print(f"{data_folder_path} is not a directory. Please check manually! Exiting.")
+            sys.exit(1)
+        else:
+            print(f"Checking ownership of {data_folder_path}.")
+            uid = data_folder_path.stat().st_uid
+            gid = data_folder_path.stat().st_gid
+            if uid != pg_owner:
+                print(f"Owner differs. Currently set: {uid}. Should be {pg_owner}. Please check manually! Not exiting.")
+            if gid != pg_group:
+                print(f"Group differs. Currently set: {gid}. Should be {pg_group}. Please check manually! Not exiting.")
+            if uid == pg_owner and gid == pg_group:
+                print(f"DB folder seems to be set up correctly.")
+    else:
+        print(f"Not existing. Creating {data_folder_path} recursively and setting owner/group to 1000:1000.")
+        makedirs(data_folder_path)
+        chown(data_folder_path, pg_owner, pg_group)
 
 
 def main() -> int:
@@ -231,6 +264,7 @@ def main() -> int:
     if args.dry_run:
         print(" ".join(call))
         return 0
+    create_postgres_data_folder(env)
     if args.subcommand == "prod" and (args.staging or args.staging_dev):
         for file in staging_template_files[args.stack]:
             template_file = template_files_dir / file
