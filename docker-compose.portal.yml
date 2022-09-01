@@ -11,7 +11,7 @@ x-logging:
 services:
   # global prometheus instance scraping data from the local instances
   portal_prometheus:
-    image: "prom/prometheus:v2.36.0"
+    image: "prom/prometheus:v2.38.0"
     container_name: portal_prometheus
     networks:
       portal:
@@ -23,7 +23,7 @@ services:
       - "9090"
 
   portal_timescaledb:
-    image: "timescale/timescaledb-ha:pg14.3-ts2.7.0-latest"
+    image: "timescale/timescaledb-ha:pg14.4-ts2.7.2-latest"
     container_name: portal_timescaledb
     command: postgres -c shared_preload_libraries=timescaledb
     networks:
@@ -37,7 +37,7 @@ services:
       - ${POSTGRES_DATA_FOLDER}:/home/postgres/pgdata
   portal_promscale:
     container_name: portal_promscale
-    image: "timescale/promscale:0.12.1"
+    image: "timescale/promscale:0.14.0"
     ports:
       - 9201:9201/tcp
     restart: on-failure
@@ -52,7 +52,7 @@ services:
       PROMSCALE_DB_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=allow
 
   portal_grafana:
-    image: "grafana/grafana:9.0.2"
+    image: "grafana/grafana:9.1.2"
     container_name: portal_grafana
     depends_on:
       - portal_prometheus
