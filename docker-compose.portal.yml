@@ -23,7 +23,7 @@ services:
       - "9090"
 
   portal_timescaledb:
-    image: "timescale/timescaledb-ha:pg14.4-ts2.7.2-latest"
+    image: "timescale/timescaledb-ha:pg14.5-ts2.8-latest"
     container_name: portal_timescaledb
     command: postgres -c shared_preload_libraries=timescaledb
     networks:
