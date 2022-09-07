@@ -35,7 +35,7 @@ services:
       - "${EXPORTER_PORT}:8080"
   # prometheus instance responsible for monitoring
   site_prometheus:
-    image: "prom/prometheus:v2.37.0"
+    image: "prom/prometheus:v2.38.0"
     # use self build Dockerfile as alternative
     # build: prod/site_prometheus
     container_name: project_usage_prometheus
@@ -51,7 +51,7 @@ services:
     # use the one below to have haproxy debug log directly to stdout including
     # every request with auth headers
     # image: mminks/haproxy-docker-logging:latest
-    image: "haproxy:2.6.0-alpine"
+    image: "haproxy:2.6.4-alpine"
     # use self build Dockerfile as alternative
     # build: prod/haproxy
     container_name: project_usage_proxy
@@ -71,7 +71,7 @@ services:
     environment:
       - PORTAL_AUTH_TOKEN
   site_grafana:
-    image: "grafana/grafana:9.0.2"
+    image: "grafana/grafana:9.1.2"
     # use self build Dockerfile as alternative
     # build: prod/grafana
     container_name: project_usage_grafana
