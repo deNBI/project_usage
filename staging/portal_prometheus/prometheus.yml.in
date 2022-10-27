@@ -32,6 +32,24 @@ scrape_configs:
 
     bearer_token: "${PORTAL_AUTH_TOKEN}"
 
+  - job_name: 'denbi_cloud_project_devstack_usage'
+    honor_labels: true
+    metrics_path: '/federate'
+    scheme: 'http'
+
+    params:
+      'match[]':
+        # do not collect any metrics besides the one we are interested in
+        - '{job="project_usages",__name__=~"project_.*_usage"}'
+
+    static_configs:
+      - targets: ['${STAGING_SITE_DEVSTACK_URL}:${SITE_PROXY_DEVSTACK_PORT}']
+        labels:
+          location: ${DEVSTACK_LOCATION}
+          location_id: ${DEVSTACK_RESOURCE_ID}
+
+    bearer_token: "${DEVSTACK_AUTH_TOKEN}"
+
   - job_name: 'grafana'
     honor_labels: true
     static_configs:
