@@ -9,7 +9,7 @@ i.e. `logs`, `start` ...
 import logging
 import sys
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
-from os import environ, execve, path, makedirs, chown
+from os import environ, makedirs, chown, execve
 from pathlib import Path
 from shutil import which
 from string import Template
@@ -20,7 +20,7 @@ __author__ = "gilbus"
 __license__ = "MIT"
 
 
-docker_compose_path = which("docker-compose")
+docker_path = which("docker")
 project_dir = Path(__file__).parent.parent
 dev_dir = project_dir / "dev"
 prod_dir = project_dir / "prod"
@@ -227,10 +227,10 @@ def main() -> int:
     logging.debug(
         "Known command line arguments: %s, Remainder: %s", args, remaining_args
     )
-    if not docker_compose_path:
-        logging.critical("Could not detect `docker-compose` in $PATH. Exiting")
+    if not docker_path:
+        logging.critical("Could not detect `docker` in $PATH. Exiting")
         return 1
-    call = [docker_compose_path]
+    call = [docker_path, "compose"]
 
     if "dev" == args.subcommand:
         needed_compose_files = development_files
@@ -264,7 +264,10 @@ def main() -> int:
     if args.dry_run:
         print(" ".join(call))
         return 0
-    create_postgres_data_folder(env)
+    if "dev" == args.subcommand:
+        create_postgres_data_folder(env)
+    elif args.stack == "portal":
+        create_postgres_data_folder(env)
     if args.subcommand == "prod" and (args.staging or args.staging_dev):
         for file in staging_template_files[args.stack]:
             template_file = template_files_dir / file
@@ -285,7 +288,7 @@ def main() -> int:
             out_file.write_text(out_file_str)
 
     logging.debug("Executing %s with environment %s", call, env)
-    execve(docker_compose_path, call, env)
+    execve(docker_path, call, env)
 
     return 0
 
