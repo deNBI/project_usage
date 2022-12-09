@@ -35,7 +35,7 @@ services:
       - "${EXPORTER_PORT}:8080"
   # prometheus instance responsible for monitoring
   site_prometheus:
-    image: "prom/prometheus:v2.40.1"
+    image: "prom/prometheus:v2.40.5"
     # use self build Dockerfile as alternative
     # build: prod/site_prometheus
     container_name: project_usage_prometheus
