@@ -11,7 +11,7 @@ x-logging:
 services:
   # global prometheus instance scraping data from the local instances
   portal_prometheus:
-    image: "prom/prometheus:v2.40.1"
+    image: "prom/prometheus:v2.40.5"
     container_name: portal_prometheus
     networks:
       portal:
@@ -52,7 +52,7 @@ services:
       PROMSCALE_DB_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=allow
 
   portal_grafana:
-    image: "grafana/grafana:9.2.3"
+    image: "grafana/grafana:9.3.1"
     container_name: portal_grafana
     depends_on:
       - portal_prometheus
