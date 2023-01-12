@@ -37,7 +37,7 @@ services:
       - ${POSTGRES_DATA_FOLDER}:/home/postgres/pgdata
   portal_promscale:
     container_name: portal_promscale
-    image: "timescale/promscale:0.16.0"
+    image: "timescale/promscale:0.17.0"
     ports:
       - 9201:9201/tcp
     restart: on-failure
