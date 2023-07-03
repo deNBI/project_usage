@@ -51,7 +51,7 @@ services:
     # use the one below to have haproxy debug log directly to stdout including
     # every request with auth headers
     # image: mminks/haproxy-docker-logging:latest
-    image: "haproxy:2.7.8-alpine"
+    image: "haproxy:2.8.0-alpine"
     # use self build Dockerfile as alternative
     # build: prod/haproxy
     container_name: project_usage_proxy
