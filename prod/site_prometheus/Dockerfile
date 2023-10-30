@@ -1,4 +1,4 @@
-FROM prom/prometheus:v2.45.0
+FROM prom/prometheus:v2.47.2
 # relative to compose file
 ADD prometheus.yml /etc/prometheus/prometheus.yml
 
