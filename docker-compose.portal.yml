@@ -52,7 +52,7 @@ services:
       PROMSCALE_DB_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=allow
 
   portal_grafana:
-    image: "grafana/grafana:9.5.2"
+    image: "grafana/grafana:9.5.21"
     container_name: portal_grafana
     depends_on:
       - portal_prometheus
